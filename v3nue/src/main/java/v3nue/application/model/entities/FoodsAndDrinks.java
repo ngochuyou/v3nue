@@ -7,8 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.Size;
 
 import v3nue.core.model.AbstractFactor;
 
@@ -20,7 +19,7 @@ import v3nue.core.model.AbstractFactor;
 @Table(name = "foods_and_drinks")
 public class FoodsAndDrinks extends AbstractFactor {
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
 	private float price;
 

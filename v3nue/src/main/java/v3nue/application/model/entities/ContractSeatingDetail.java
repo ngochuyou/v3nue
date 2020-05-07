@@ -13,8 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.Size;
 
 import v3nue.core.model.AbstractEntity;
 
@@ -36,8 +35,8 @@ public class ContractSeatingDetail extends AbstractEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("seatingId")
 	private Seating seating;
-	
-	@Range(min = 0)
+
+	@Size(min = 0)
 	@Column(nullable = false)
 	private int amount;
 

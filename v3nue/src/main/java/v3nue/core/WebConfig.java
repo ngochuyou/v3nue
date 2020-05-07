@@ -5,7 +5,6 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -25,7 +24,6 @@ import v3nue.core.utils.Constants;
 
 @EnableWebMvc
 @EnableTransactionManagement
-@EnableConfigurationProperties
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
@@ -54,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
 		properties.put("hibernate.format_sql", true);
 		properties.put("hibernate.id.new_generator_mappings", "false");
 		properties.put("hibernate.hbm2ddl.auto", "update");
-		properties.put("hibernate.flushMode", "COMMIT");
+		properties.put("hibernate.flushMode", "MANUAL");
 		sessionFactory.setHibernateProperties(properties);
 
 		return sessionFactory;

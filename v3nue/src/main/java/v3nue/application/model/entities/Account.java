@@ -19,8 +19,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Email;
-
-import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.Size;
 
 import v3nue.core.model.AbstractEntity;
 import v3nue.core.utils.AccountRole;
@@ -38,7 +37,7 @@ import v3nue.core.utils.Gender;
 public class Account extends AbstractEntity {
 
 	@Id
-	@Range(min = 8, max = 255)
+	@Size(min = 8, max = 255)
 	private String id;
 
 	@Email
@@ -53,7 +52,7 @@ public class Account extends AbstractEntity {
 	private String password;
 
 	@Column(nullable = false)
-	@Range(min = 1, max = 255)
+	@Size(min = 1, max = 255)
 	private String fullname;
 
 	@Enumerated(EnumType.STRING)

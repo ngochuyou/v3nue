@@ -10,9 +10,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.Range;
 
 import v3nue.core.model.AbstractEntity;
 
@@ -25,7 +25,7 @@ import v3nue.core.model.AbstractEntity;
 public class Booking extends AbstractEntity {
 
 	@Id
-	@Range(min = 8, max = 255)
+	@Size(min = 8, max = 255)
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 

@@ -4,11 +4,12 @@
 package v3nue.core.model;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.validator.constraints.Range;
 
 /**
  * Every class which extends from this class is determined as a 'factor'. One
@@ -21,14 +22,15 @@ import org.hibernate.validator.constraints.Range;
 public class AbstractFactor extends AbstractEntity {
 
 	@Id
-	@Range(min = 8, max = 255)
+	@Size(min = 8, max = 255)
+	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 
 	@Column(name = "created_by", nullable = false)
 	private String createdBy;
 
-	@Range(min = 1, max = 255)
+	@Size(min = 1, max = 255)
 	@Column(nullable = false, unique = true)
 	private String name;
 

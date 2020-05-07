@@ -13,8 +13,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.Size;
 
 import v3nue.core.model.AbstractEntity;
 
@@ -37,11 +36,11 @@ public class ContractMandatoryDetail extends AbstractEntity {
 	@MapsId("mandatoryId")
 	private Mandatory mandatory;
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
 	private int amount;
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
 	private float total;
 

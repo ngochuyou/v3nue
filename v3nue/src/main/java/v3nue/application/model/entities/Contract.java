@@ -12,8 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-
-import org.hibernate.validator.constraints.Range;
+import javax.validation.constraints.Size;
 
 import v3nue.core.model.AbstractFactor;
 
@@ -25,15 +24,15 @@ import v3nue.core.model.AbstractFactor;
 @Table(name = "contracts")
 public class Contract extends AbstractFactor {
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
-	private float agreeAmount;
+	private float agreedAmount;
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
 	private float depositAmount;
 
-	@Range(min = 0)
+	@Size(min = 0)
 	@Column(nullable = false)
 	private float totalAmount;
 
@@ -55,12 +54,12 @@ public class Contract extends AbstractFactor {
 	@OneToMany(mappedBy = "contract", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<ContractFoodsAndDrinksDetail> foodsAndDrinksDetails;
 
-	public float getAgreeAmount() {
-		return agreeAmount;
+	public float getAgreedAmount() {
+		return agreedAmount;
 	}
 
-	public void setAgreeAmount(float agreeAmount) {
-		this.agreeAmount = agreeAmount;
+	public void setAgreedAmount(float agreedAmount) {
+		this.agreedAmount = agreedAmount;
 	}
 
 	public float getDepositAmount() {
