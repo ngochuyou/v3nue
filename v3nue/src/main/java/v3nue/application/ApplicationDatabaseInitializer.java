@@ -70,6 +70,18 @@ public class ApplicationDatabaseInitializer implements ApplicationManager {
 			logger.info("Inserting WRITE");
 		}
 
+		query = session.createQuery("SELECT COUNT(*) FROM Authority WHERE name = 'FULL_ACCESS'", Long.class);
+
+		if (query.getSingleResult() == 0) {
+			Authority write = new Authority();
+
+			write.setName("FULL_ACCESS");
+			write.setActive(true);
+			write.setCreatedBy("ngochuyou");
+			session.save(write);
+			logger.info("Inserting FULL_ACCESS");
+		}
+		
 		logger.info("Finished creating authorities");
 		logger.info("Creating Admin accounts");
 		query = session.createQuery("SELECT COUNT(*) FROM Admin WHERE id = 'ngochuyou'", Long.class);

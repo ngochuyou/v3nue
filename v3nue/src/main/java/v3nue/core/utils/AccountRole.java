@@ -9,6 +9,6 @@ package v3nue.core.utils;
  */
 public enum AccountRole {
 	
-	Admin, Customer, Manager, Employee
+	Anonymous, Admin, Customer, Manager, Employee
 	
 }

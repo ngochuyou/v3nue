@@ -19,7 +19,7 @@ public class Constants {
 
 	public static final String basePackage = "v3nue";
 
-	public static final String[] publicEndPoints = { "/oauth/**" };
+	public static final String[] publicEndPoints = { "/oauth/**", "/api/account/**" };
 	
 	public static final String resourceId = "v3nue-base";
 	
