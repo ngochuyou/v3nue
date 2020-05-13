@@ -4,6 +4,7 @@
 package v3nue.application.model.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -84,6 +85,11 @@ class ContractMandatoryDetailId implements Serializable {
 	@Column(name = "mandatory_id")
 	private String mandatoryId;
 
+	public ContractMandatoryDetailId() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	public ContractMandatoryDetailId(String contractId, String mandatoryId) {
 		super();
 		this.contractId = contractId;
@@ -108,6 +114,27 @@ class ContractMandatoryDetailId implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if (this == obj)
+			return true;
+
+		if (!(obj instanceof ContractMandatoryDetailId))
+			return false;
+
+		ContractMandatoryDetailId that = (ContractMandatoryDetailId) obj;
+
+		return Objects.equals(this.contractId, that.getContractId())
+				&& Objects.equals(this.mandatoryId, that.getMandatoryId());
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return Objects.hash(this.contractId, this.mandatoryId);
 	}
 
 }

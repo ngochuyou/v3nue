@@ -16,6 +16,8 @@ import v3nue.core.model.annotations.Relation;
 @Relation(relation = AbstractEntity.class)
 public class AbstractModel implements Model {
 
+	private Object id;
+
 	private Date createdDate;
 
 	private Date updatedDate;
@@ -44,6 +46,14 @@ public class AbstractModel implements Model {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+
+	public Object getId() {
+		return id;
+	}
+
+	public void setId(Object id) {
+		this.id = id;
 	}
 
 }

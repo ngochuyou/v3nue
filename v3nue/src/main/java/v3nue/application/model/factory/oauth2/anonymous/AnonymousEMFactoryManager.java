@@ -31,7 +31,7 @@ import v3nue.core.model.factory.Factory;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class AnonymousEMFactoryManager implements EMFactoryManager, ApplicationManager {
 
-	private Map<Class<? extends AbstractEntity>, EMFactory> factoryMap;
+	private Map<Class<? extends AbstractEntity>, EMFactory<? extends AbstractEntity, ? extends Model>> factoryMap;
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -64,7 +64,7 @@ public class AnonymousEMFactoryManager implements EMFactoryManager, ApplicationM
 	@Override
 	public <T extends AbstractEntity, M extends Model> EMFactory<T, M> getEMFactory(Class<T> clazz) {
 		// TODO Auto-generated method stub
-		return this.factoryMap.get(clazz);
+		return (EMFactory<T, M>) this.factoryMap.get(clazz);
 	}
 
 }
