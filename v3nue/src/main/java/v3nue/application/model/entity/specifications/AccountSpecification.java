@@ -3,16 +3,15 @@
  */
 package v3nue.application.model.entity.specifications;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Account;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecification;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -24,7 +23,7 @@ import v3nue.core.utils.StringUtil;
 public class AccountSpecification extends CompositeSpecification<Account> {
 
 	@Override
-	public EntityValidationResult<Account> isSatisfiedBy(Account entity) {
+	public DatabaseOperationResult<Account> isSatisfiedBy(Account entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		String id = entity.getId();
@@ -45,7 +44,7 @@ public class AccountSpecification extends CompositeSpecification<Account> {
 
 		String email = entity.getEmail();
 
-		if (email == null || !StringUtil.isEmail(email)) {
+		if (!StringUtil.isEmpty(email) && !StringUtil.isEmail(email)) {
 			messages.put("email", "Invalid email address.");
 			status = BAD;
 		}
@@ -64,24 +63,17 @@ public class AccountSpecification extends CompositeSpecification<Account> {
 			status = BAD;
 		}
 
-		if (entity.getGender() == null) {
-			messages.put("gender", "Gender must be presented.");
-			status = BAD;
-		}
-
 		if (entity.getRole() == null) {
 			messages.put("role", "Account's role must be presented.");
 			status = BAD;
 		}
-
-		Date dob = entity.getDob();
-
-		if (dob == null || dob.after(new Date())) {
-			messages.put("dob", "Invalid birth date.");
+		
+		if (entity.getGender() == null) {
+			messages.put("gender", "Account's gender must be presented.");
 			status = BAD;
 		}
-
-		return new EntityValidationResult<Account>(entity, messages, status);
+		
+		return new DatabaseOperationResult<Account>(entity, messages, status);
 	}
 
 }

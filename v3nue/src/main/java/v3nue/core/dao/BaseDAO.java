@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import v3nue.core.SpecificationFactory;
 import v3nue.core.model.AbstractEntity;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 import v3nue.core.model.entity.specification.Specification;
 import v3nue.core.utils.ClassReflector;
 
@@ -32,7 +31,7 @@ public class BaseDAO {
 	@Autowired
 	protected SpecificationFactory specificationFactory;
 
-	protected EntityValidationResult<?> result;
+	protected DatabaseOperationResult<?> result;
 
 	protected final String OK = "OK.";
 
@@ -110,30 +109,30 @@ public class BaseDAO {
 	 * @throws QueryBuilderException
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public <T extends AbstractEntity> EntityValidationResult<T> insert(T object, Class<T> clazz) {
+	public <T extends AbstractEntity> DatabaseOperationResult<T> insert(T object, Class<T> clazz) {
 		Session ss = factory.getCurrentSession();
 		// check the parameters
 		if (object == null || clazz == null) {
-			return EntityValidationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+			return DatabaseOperationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
 		}
 		// check if the entity's Id exsits
 		T instance = this.findById(object.getId(), clazz);
 
 		if (instance != null) {
-			return EntityValidationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
 		}
 		// validate entity
 		Specification<T> specification = (Specification<T>) specificationFactory
 				.getSpecification(reflector.getEntityName(clazz));
 
 		if (!(result = specification.isSatisfiedBy(object)).isOkay()) {
-			return EntityValidationResult.error(object, result.getMessages(), result.getStatus());
+			return DatabaseOperationResult.error(object, result.getMessages(), result.getStatus());
 		}
 
 		ss.evict(object);
 		ss.save(object);
 
-		return EntityValidationResult.success(object, result.getMessages());
+		return DatabaseOperationResult.success(object, result.getMessages());
 	}
 
 	/**
@@ -145,30 +144,30 @@ public class BaseDAO {
 	 * @throws QueryBuilderException
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractEntity> EntityValidationResult<T> update(T object, Class<T> clazz) {
+	public <T extends AbstractEntity> DatabaseOperationResult<T> update(T object, Class<T> clazz) {
 		Session ss = factory.getCurrentSession();
 		// check the parameters
 		if (object == null || clazz == null) {
-			return EntityValidationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+			return DatabaseOperationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
 		}
 		// check if entity exists
 		T instance = this.findById(object.getId(), clazz);
 
 		if (instance == null) {
-			return EntityValidationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
 		}
 		// validate entity and save
 		Specification<T> specification = (Specification<T>) specificationFactory
 				.getSpecification(reflector.getEntityName(clazz));
 
 		if (!(result = specification.isSatisfiedBy(object)).isOkay()) {
-			return EntityValidationResult.error(object, result.getMessages(), result.getStatus());
+			return DatabaseOperationResult.error(object, result.getMessages(), result.getStatus());
 		}
 
 		ss.evict(object);
 		ss.update(object);
 
-		return EntityValidationResult.success(object, result.getMessages());
+		return DatabaseOperationResult.success(object, result.getMessages());
 	}
 
 }

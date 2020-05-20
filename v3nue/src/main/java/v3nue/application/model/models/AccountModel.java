@@ -7,8 +7,6 @@ import java.util.Date;
 
 import v3nue.application.model.entities.Account;
 import v3nue.core.model.annotations.Relation;
-import v3nue.core.utils.AccountRole;
-import v3nue.core.utils.Gender;
 
 /**
  * @author Ngoc Huy
@@ -27,9 +25,9 @@ public class AccountModel extends AbstractModel {
 
 	private String fullname;
 
-	private Gender gender;
+	private String gender;
 
-	private AccountRole role;
+	private String role;
 
 	private String photo;
 
@@ -75,19 +73,19 @@ public class AccountModel extends AbstractModel {
 		this.fullname = fullname;
 	}
 
-	public Gender getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(Gender gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 
-	public AccountRole getRole() {
+	public String getRole() {
 		return role;
 	}
 
-	public void setRole(AccountRole role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 

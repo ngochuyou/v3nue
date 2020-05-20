@@ -1,0 +1,13 @@
+* {
+	box-sizing: border-box;
+	font-family: 'Comfortaa', cursive !important;
+}
+
+#loginform, #signupform {
+	opacity: 0.3;
+	transition: opacity 0.2s ease-in-out;
+}
+
+#loginform:hover, #signupform:hover {
+	opacity: 1;
+}

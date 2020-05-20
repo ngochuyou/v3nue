@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import v3nue.application.model.entities.Booking;
 import v3nue.application.model.entities.Contract;
 import v3nue.application.model.entities.Personnel;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -29,7 +29,7 @@ import v3nue.core.utils.StringUtil;
 public class ContractSpecification extends CompositeSpecificationWithDAO<Contract> {
 
 	@Override
-	public EntityValidationResult<Contract> isSatisfiedBy(Contract entity) {
+	public DatabaseOperationResult<Contract> isSatisfiedBy(Contract entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -89,7 +89,7 @@ public class ContractSpecification extends CompositeSpecificationWithDAO<Contrac
 			status = BAD;
 		}
 			
-		return new EntityValidationResult<Contract>(entity, messages, status);
+		return new DatabaseOperationResult<Contract>(entity, messages, status);
 	}
 
 }

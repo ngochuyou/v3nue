@@ -3,13 +3,17 @@
  */
 package v3nue.application.model.factory.converters;
 
+import org.springframework.stereotype.Component;
+
 import v3nue.application.model.entities.Admin;
 import v3nue.application.model.models.AdminModel;
+import v3nue.core.model.factory.EMConvertMethod;
 
 /**
  * @author Ngoc Huy
  *
  */
+@Component
 public class AdminEMConverter implements EMConvertMethod<Admin, AdminModel> {
 
 	private AccountEMConverter superConverter = new AccountEMConverter();

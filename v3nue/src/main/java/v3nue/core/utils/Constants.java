@@ -17,9 +17,12 @@ public class Constants {
 
 	public static final String specificationPackage = "v3nue.application.model.entity.specifications";
 
+	public static final String factoryPackage = "v3nue.application.model.factory";
+
 	public static final String basePackage = "v3nue";
 
-	public static final String[] publicEndPoints = { "/oauth/**" };
+	public static final String[] publicEndPoints = { "/oauth/**", "/api/account\\POST", "/api/account/unique\\GET",
+			"/api/account/{id:.+}\\GET" };
 
 	public static final String resourceId = "v3nue-base";
 

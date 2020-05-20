@@ -6,6 +6,8 @@ package v3nue.application;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -38,50 +40,42 @@ public class ApplicationDatabaseInitializer implements ApplicationManager {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	public static final Authority READ = new Authority("1f11d41e-2f09-404f-a0ce-0553f13b895f", "ngochuyou", "READ",
+			true);
+	public static final Authority WRITE = new Authority("47686f2c-3195-4a19-a1d5-6181e17d2090", "ngochuyou", "WRITE",
+			true);
+	public static final Authority FULL_ACCESS = new Authority("e26e91c0-b09d-44ea-98f0-2b0b2e84fc9c", "ngochuyou",
+			"FULL_ACCESS", true);
+
 	@Override
 	@Transactional
 	public void initialize() {
 		// TODO Auto-generated method stub
 		logger.info("Initializing DatabaseInitializer");
 		logger.info("Creating authorities");
-		
+
 		Session session = sessionFactory.getCurrentSession();
 		Query<Long> query = session.createQuery("SELECT COUNT(*) FROM Authority WHERE name = 'READ'", Long.class);
 
 		if (query.getSingleResult() == 0) {
-			Authority read = new Authority();
-
-			read.setName("READ");
-			read.setActive(true);
-			read.setCreatedBy("ngochuyou");
-			session.save(read);
-			logger.info("Inserting READ");
+			session.save(READ);
+			logger.info("Inserting READ authority");
 		}
 
 		query = session.createQuery("SELECT COUNT(*) FROM Authority WHERE name = 'WRITE'", Long.class);
 
 		if (query.getSingleResult() == 0) {
-			Authority write = new Authority();
-
-			write.setName("WRITE");
-			write.setActive(true);
-			write.setCreatedBy("ngochuyou");
-			session.save(write);
-			logger.info("Inserting WRITE");
+			session.save(WRITE);
+			logger.info("Inserting WRITE authority");
 		}
 
 		query = session.createQuery("SELECT COUNT(*) FROM Authority WHERE name = 'FULL_ACCESS'", Long.class);
 
 		if (query.getSingleResult() == 0) {
-			Authority write = new Authority();
-
-			write.setName("FULL_ACCESS");
-			write.setActive(true);
-			write.setCreatedBy("ngochuyou");
-			session.save(write);
-			logger.info("Inserting FULL_ACCESS");
+			session.save(FULL_ACCESS);
+			logger.info("Inserting FULL_ACCESS authority");
 		}
-		
+
 		logger.info("Finished creating authorities");
 		logger.info("Creating Admin accounts");
 		query = session.createQuery("SELECT COUNT(*) FROM Admin WHERE id = 'ngochuyou'", Long.class);
@@ -108,6 +102,7 @@ public class ApplicationDatabaseInitializer implements ApplicationManager {
 			ngochuyou.setPhone("0974032706");
 			ngochuyou.setPhoto("photo.jpg");
 			ngochuyou.setRole(AccountRole.Admin);
+			ngochuyou.setAuthorities(Stream.of(FULL_ACCESS).collect(Collectors.toSet()));
 			session.save(ngochuyou);
 			logger.info("Inserting ngochuyou as ADMIN");
 		}

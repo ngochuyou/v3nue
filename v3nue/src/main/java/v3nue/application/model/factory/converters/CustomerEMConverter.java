@@ -3,13 +3,17 @@
  */
 package v3nue.application.model.factory.converters;
 
+import org.springframework.stereotype.Component;
+
 import v3nue.application.model.entities.Customer;
 import v3nue.application.model.models.CustomerModel;
+import v3nue.core.model.factory.EMConvertMethod;
 
 /**
  * @author Ngoc Huy
  *
  */
+@Component
 public class CustomerEMConverter implements EMConvertMethod<Customer, CustomerModel> {
 
 	private AccountEMConverter superConverter = new AccountEMConverter();

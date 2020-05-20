@@ -22,14 +22,14 @@ public abstract class AbstractEntity implements Model {
 
 	@CreationTimestamp
 	@Column(name = "created_date", nullable = false)
-	private Date createdDate;
+	protected Date createdDate;
 
 	@UpdateTimestamp
 	@Column(name = "updated_date", nullable = false)
-	private Date updatedDate;
+	protected Date updatedDate;
 
 	@Column(name = "is_active", nullable = false)
-	private boolean isActive;
+	protected boolean isActive;
 
 	/**
 	 * This method is used to make sure every entities in the application has a

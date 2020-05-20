@@ -3,6 +3,7 @@
  */
 package v3nue.core.model.entity.specification;
 
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.AbstractEntity;
 
 /**
@@ -23,7 +24,7 @@ public interface Specification<T extends AbstractEntity> {
 	 * 
 	 * @return The object which represents the validating result.
 	 */
-	EntityValidationResult<T> isSatisfiedBy(T entity);
+	DatabaseOperationResult<T> isSatisfiedBy(T entity);
 
 	/**
 	 * A function to support the validating process of inherited entities.

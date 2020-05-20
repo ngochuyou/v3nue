@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.FoodsAndDrinks;
 import v3nue.application.model.entities.FoodsAndDrinksType;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -28,7 +28,7 @@ import v3nue.core.utils.StringUtil;
 public class FoodsAndDrinksSpecification extends CompositeSpecificationWithDAO<FoodsAndDrinks> {
 
 	@Override
-	public EntityValidationResult<FoodsAndDrinks> isSatisfiedBy(FoodsAndDrinks entity) {
+	public DatabaseOperationResult<FoodsAndDrinks> isSatisfiedBy(FoodsAndDrinks entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -61,7 +61,7 @@ public class FoodsAndDrinksSpecification extends CompositeSpecificationWithDAO<F
 			}
 		}
 
-		return new EntityValidationResult<FoodsAndDrinks>(entity, messages, status);
+		return new DatabaseOperationResult<FoodsAndDrinks>(entity, messages, status);
 	}
 
 }

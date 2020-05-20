@@ -25,14 +25,14 @@ public class AbstractFactor extends AbstractEntity {
 	@Size(min = 8, max = 255)
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String id;
+	protected String id;
 
 	@Column(name = "created_by", nullable = false)
-	private String createdBy;
+	protected String createdBy;
 
 	@Size(min = 1, max = 255)
 	@Column(nullable = false, unique = true)
-	private String name;
+	protected String name;
 
 	public String getId() {
 		return id;

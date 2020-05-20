@@ -12,11 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
+import v3nue.application.OAuth2AuthenticationBasedEMFactoryManagerProvider;
 import v3nue.core.dao.BaseDAO;
+import v3nue.core.model.Model;
 import v3nue.core.security.server.authorization.CustomUserDetails;
 
 /**
@@ -48,6 +51,12 @@ public class BaseController {
 	@Autowired
 	protected BaseDAO dao;
 
+	@Autowired
+	protected OAuth2AuthenticationBasedEMFactoryManagerProvider oauth2BasedFactoryManagerProvider;
+
+	@Autowired
+	protected SecurityContext securityContext;
+	
 	/**
 	 * Open a session with optional {@link FlushMode}
 	 * 
@@ -61,8 +70,6 @@ public class BaseController {
 	/**
 	 * Open a session with MANUAL {@link FlushMode}
 	 * 
-	 * @param isFlushAllowed if true then flush the current session, otherwise clear
-	 *                       it
 	 */
 	protected void openSession() {
 		sessionFactory.getCurrentSession().setHibernateFlushMode(FlushMode.MANUAL);
@@ -85,6 +92,31 @@ public class BaseController {
 	}
 
 	/**
+	 * @param <T>          Generic type of the object
+	 * @param object       client's provided object
+	 * @param status       the response status
+	 * @param flushSession weather if {@link Session} is allowed to flush
+	 * 
+	 * @return a response based on the status
+	 */
+	protected <T> ResponseEntity<?> handle(T object, int status, boolean flushSession) {
+		this.cleanUpSession(flushSession);
+
+		return new ResponseEntity<>(object, null, HttpStatus.valueOf(status));
+	}
+
+	/**
+	 * Return success a response
+	 * 
+	 * @return response with 200 and modelized entity
+	 */
+	protected <M extends Model> ResponseEntity<?> handleSuccess(M model) {
+		this.cleanUpSession(true);
+
+		return new ResponseEntity<>(model, null, HttpStatus.valueOf(OK));
+	}
+
+	/**
 	 * Return a response to a denied request
 	 * 
 	 * @return response with 403 and access denied message
@@ -92,7 +124,7 @@ public class BaseController {
 	protected <T> ResponseEntity<?> handleAccessDenied() {
 		this.cleanUpSession(false);
 
-		return new ResponseEntity<>(ACCESS_DENIED, HttpStatus.valueOf(403));
+		return new ResponseEntity<>(ACCESS_DENIED, null, HttpStatus.valueOf(403));
 	}
 
 	/**
@@ -103,7 +135,7 @@ public class BaseController {
 	protected <T> ResponseEntity<?> handlePrivateResource() {
 		this.cleanUpSession(false);
 
-		return new ResponseEntity<>(PRIVATE_RESOURCE, HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<>(PRIVATE_RESOURCE, null, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -114,7 +146,7 @@ public class BaseController {
 	protected <T> ResponseEntity<?> handleResourceNotFound() {
 		this.cleanUpSession(false);
 
-		return new ResponseEntity<>(NOTFOUND, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(NOTFOUND, null, HttpStatus.NOT_FOUND);
 	}
 
 	/**
@@ -126,8 +158,10 @@ public class BaseController {
 	 * @exception AccessDeniedException when authentication does not contain any
 	 *                                  allowed scopes
 	 */
-	protected final void checkAccountScopes(Authentication auth, String... allowed) throws AccessDeniedException {
-		Collection<String> scopes = ((CustomUserDetails) auth.getPrincipal()).getScopes();
+	protected final void checkAccountScopes(String... allowed) throws AccessDeniedException {
+		CustomUserDetails detail = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication()
+				.getPrincipal();
+		Collection<String> scopes = detail.getScopes();
 
 		if (scopes.contains(FULL_ACCESS)) {
 			return;

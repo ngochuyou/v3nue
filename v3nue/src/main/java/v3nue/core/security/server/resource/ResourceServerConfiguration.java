@@ -33,11 +33,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		// @formatter:off
 		http
 			.csrf().disable()
-			.cors()
-			.and()
-				.authorizeRequests()
-					.requestMatchers(CorsUtils:: isPreFlightRequest).permitAll();
-		
+			.cors();
+
 		for (String endpoint: Constants.publicEndPoints) {
 			String[] parts = endpoint.split("\\\\");
 			
@@ -63,8 +60,9 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 			}
 		}
 		
-		http.authorizeRequests()			
-					.anyRequest().authenticated();
+		http.authorizeRequests()
+				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+				.anyRequest().authenticated();
 		
 		http
 			.formLogin()
@@ -85,11 +83,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 
-		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3001", "http://localhost:3000"));
+		configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "OPTION", "DELETE", "PUT"));
 		configuration.setMaxAge((long) 3600);
-		configuration.setAllowedHeaders(Arrays.asList("x-requested-with", "authorization", "Content-Type",
-				"Authorization", "credential", "X-XSRF-TOKEN"));
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type", "Accept", "X-Requested-With", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Origin"));
 		configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

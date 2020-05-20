@@ -13,10 +13,10 @@ import javax.persistence.criteria.Root;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Account;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.AbstractFactor;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 
 /**
  * @author Ngoc Huy
@@ -27,7 +27,7 @@ import v3nue.core.model.entity.specification.EntityValidationResult;
 public class AbstractFactorSpecification extends CompositeSpecificationWithDAO<AbstractFactor> {
 
 	@Override
-	public EntityValidationResult<AbstractFactor> isSatisfiedBy(AbstractFactor entity) {
+	public DatabaseOperationResult<AbstractFactor> isSatisfiedBy(AbstractFactor entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<String, String>();
 		int status = OK;
@@ -71,12 +71,12 @@ public class AbstractFactorSpecification extends CompositeSpecificationWithDAO<A
 				status = CONFLICT;
 			}
 			
-			return new EntityValidationResult<AbstractFactor>(entity, messages, status);
+			return new DatabaseOperationResult<AbstractFactor>(entity, messages, status);
 		}
 		
 		messages.put("createdBy", "Creator's id must be a valid information.");
 		
-		return new EntityValidationResult<AbstractFactor>(entity, messages, BAD);
+		return new DatabaseOperationResult<AbstractFactor>(entity, messages, BAD);
 	}
 
 }

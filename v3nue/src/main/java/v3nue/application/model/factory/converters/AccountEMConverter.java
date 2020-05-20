@@ -3,13 +3,18 @@
  */
 package v3nue.application.model.factory.converters;
 
+import org.springframework.stereotype.Component;
+
 import v3nue.application.model.entities.Account;
 import v3nue.application.model.models.AccountModel;
+import v3nue.core.model.factory.AbstractEMConverter;
+import v3nue.core.model.factory.EMConvertMethod;
 
 /**
  * @author Ngoc Huy
  *
  */
+@Component
 public class AccountEMConverter implements EMConvertMethod<Account, AccountModel> {
 
 	private AbstractEMConverter superConverter = new AbstractEMConverter();

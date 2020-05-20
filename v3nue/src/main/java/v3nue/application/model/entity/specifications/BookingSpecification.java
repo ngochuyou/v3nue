@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 import v3nue.application.model.entities.Booking;
 import v3nue.application.model.entities.EventType;
 import v3nue.application.model.entities.Venue;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 
 /**
  * @author Ngoc Huy
@@ -29,7 +29,7 @@ import v3nue.core.model.entity.specification.EntityValidationResult;
 public class BookingSpecification extends CompositeSpecificationWithDAO<Booking> {
 
 	@Override
-	public EntityValidationResult<Booking> isSatisfiedBy(Booking entity) {
+	public DatabaseOperationResult<Booking> isSatisfiedBy(Booking entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -85,7 +85,7 @@ public class BookingSpecification extends CompositeSpecificationWithDAO<Booking>
 			}
 		}
 
-		return new EntityValidationResult<Booking>(entity, messages, status);
+		return new DatabaseOperationResult<Booking>(entity, messages, status);
 	}
 
 }

@@ -1,0 +1,14 @@
+{
+	"oauth2": {
+		"clientId": "v3nue-client",
+		"clientSecret": "pdlwUv6NpwFZL4gx",
+		"url": "http://localhost:8080",
+		"token": {
+			"name": ["VCAT", "VCRT"],
+			"days": 30
+		}
+	},
+	"server": {
+		"url": "http://localhost:8080"
+	}
+}

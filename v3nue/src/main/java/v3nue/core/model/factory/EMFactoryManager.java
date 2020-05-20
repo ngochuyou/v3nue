@@ -3,8 +3,11 @@
  */
 package v3nue.core.model.factory;
 
+import v3nue.core.ModelManager;
 import v3nue.core.model.AbstractEntity;
+import v3nue.core.model.EntityInheritanceTree;
 import v3nue.core.model.Model;
+import v3nue.core.utils.ApplicationContextUtils;
 
 /**
  * @author Ngoc Huy
@@ -12,6 +15,10 @@ import v3nue.core.model.Model;
  */
 public interface EMFactoryManager {
 
-	public <T extends AbstractEntity, M extends Model> EMFactory<T, M> getEMFactory(Class<T> clazz);
+	<T extends AbstractEntity, M extends Model> EMFactory<T, M> getEMFactory(Class<T> clazz);
+
+	EntityInheritanceTree entityTree = ApplicationContextUtils.getContext().getBean(ModelManager.class).getEntityTree();
+
+	DefaultEMFactory defaultEMFactory = ApplicationContextUtils.getContext().getBean(DefaultEMFactory.class);
 
 }

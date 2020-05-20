@@ -9,10 +9,10 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.AbstractEntity;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecification;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 
 /**
  * @author Ngoc Huy
@@ -23,7 +23,7 @@ import v3nue.core.model.entity.specification.EntityValidationResult;
 public class AbstractEntitySpecification extends CompositeSpecification<AbstractEntity> {
 
 	@Override
-	public EntityValidationResult<AbstractEntity> isSatisfiedBy(AbstractEntity entity) {
+	public DatabaseOperationResult<AbstractEntity> isSatisfiedBy(AbstractEntity entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<String, String>();
 		int status = OK;
@@ -43,7 +43,7 @@ public class AbstractEntitySpecification extends CompositeSpecification<Abstract
 			status = BAD;
 		}
 
-		return new EntityValidationResult<AbstractEntity>(entity, messages, status);
+		return new DatabaseOperationResult<AbstractEntity>(entity, messages, status);
 	}
 
 }

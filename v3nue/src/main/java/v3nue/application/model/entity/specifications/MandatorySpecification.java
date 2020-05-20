@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Mandatory;
 import v3nue.application.model.entities.MandatoryType;
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
-import v3nue.core.model.entity.specification.EntityValidationResult;
 
 /**
  * @author Ngoc Huy
@@ -27,7 +27,7 @@ import v3nue.core.model.entity.specification.EntityValidationResult;
 public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandatory> {
 
 	@Override
-	public EntityValidationResult<Mandatory> isSatisfiedBy(Mandatory entity) {
+	public DatabaseOperationResult<Mandatory> isSatisfiedBy(Mandatory entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -60,7 +60,7 @@ public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandat
 			status = BAD;
 		}
 
-		return new EntityValidationResult<Mandatory>(entity, messages, status);
+		return new DatabaseOperationResult<Mandatory>(entity, messages, status);
 	}
 
 }

@@ -3,6 +3,7 @@
  */
 package v3nue.core.model.entity.specification;
 
+import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.AbstractEntity;
 
 /**
@@ -38,14 +39,14 @@ class And<T extends AbstractEntity> extends CompositeSpecification<T> {
 	}
 
 	@Override
-	public EntityValidationResult<T> isSatisfiedBy(T entity) {
+	public DatabaseOperationResult<T> isSatisfiedBy(T entity) {
 		// TODO Auto-generated method stub
-		EntityValidationResult<T> leftResult = this.left.isSatisfiedBy(entity);
-		EntityValidationResult<T> rightResult = this.right.isSatisfiedBy(entity);
+		DatabaseOperationResult<T> leftResult = this.left.isSatisfiedBy(entity);
+		DatabaseOperationResult<T> rightResult = this.right.isSatisfiedBy(entity);
 
 		leftResult.getMessages().putAll(rightResult.getMessages());
 
-		return new EntityValidationResult<T>(entity, leftResult.getMessages(),
+		return new DatabaseOperationResult<T>(entity, leftResult.getMessages(),
 				leftResult.isOkay() && rightResult.isOkay() ? 200 : 401);
 	}
 
