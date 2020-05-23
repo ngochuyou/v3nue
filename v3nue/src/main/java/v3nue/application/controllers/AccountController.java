@@ -34,6 +34,7 @@ import v3nue.application.service.services.AccountService;
 import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.factory.EMFactory;
 import v3nue.core.utils.AccountRole;
+import v3nue.core.utils.StringUtil;
 
 /**
  * @author Ngoc Huy
@@ -59,8 +60,8 @@ public class AccountController extends BaseController {
 	@GetMapping("/unique")
 	public ResponseEntity<?> isUnique(@RequestParam(required = false, defaultValue = "") String username,
 			@RequestParam(required = false, defaultValue = "") String email) {
-		boolean validUsername = (username.length() != 0);
-		boolean validEmail = (email.length() != 0);
+		boolean validUsername = !StringUtil.isEmpty(username);
+		boolean validEmail = !StringUtil.isEmpty(username);
 
 		if (!validUsername && !validEmail) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

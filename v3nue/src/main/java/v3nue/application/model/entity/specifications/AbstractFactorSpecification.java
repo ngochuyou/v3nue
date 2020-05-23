@@ -47,8 +47,10 @@ public class AbstractFactorSpecification extends CompositeSpecificationWithDAO<A
 
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
 		CriteriaQuery<Long> query = builder.createQuery(Long.class);
-		Root<AbstractFactor> root = query.from(AbstractFactor.class);
+		Root<? extends AbstractFactor> root = query.from(entity.getClass());
+
 		// @formatter:off
+		query.select(builder.count(root));
 		query.where(builder
 				.and(builder.notEqual(root.get("id"), entity.getId()), 
 						builder.equal(root.get("name"), entity.getName())));
@@ -57,25 +59,26 @@ public class AbstractFactorSpecification extends CompositeSpecificationWithDAO<A
 			messages.put("name", "name must be unique.");
 			status = CONFLICT;
 		}
-		
+
 		String createdBy = entity.getCreatedBy();
-		
+
 		if (createdBy != null) {
 			CriteriaQuery<Long> creatorQuery = builder.createQuery(Long.class);
 			Root<Account> creatorRoot = creatorQuery.from(Account.class);
-			
+
+			creatorQuery.select(builder.count(creatorRoot));
 			creatorQuery.where(builder.equal(creatorRoot.get("id"), createdBy));
-			
+
 			if (dao.count(creatorQuery) == 0) {
 				messages.put("createdBy", "Annonymous creator is prohibited.");
 				status = CONFLICT;
 			}
-			
+
 			return new DatabaseOperationResult<AbstractFactor>(entity, messages, status);
 		}
-		
+
 		messages.put("createdBy", "Creator's id must be a valid information.");
-		
+
 		return new DatabaseOperationResult<AbstractFactor>(entity, messages, BAD);
 	}
 

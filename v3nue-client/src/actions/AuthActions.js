@@ -93,14 +93,14 @@ export function checkSession() {
 			}
 		}
 
-		dispatch({
+		await dispatch({
 			type: UPDATE_PRINCIPAL,
 			payload: {
 				username: "holder"
 			}	
 		});
-
-		let result = fetch(`${server.url}/api/account`, {
+		
+		await fetch(`${server.url}/api/account`, {
 			method: 'GET',
 			mode: 'cors',
 			headers: {
@@ -110,13 +110,22 @@ export function checkSession() {
 		})
 		.then(async res => {
 			if (res.ok) {
-				dispatch({
+				await dispatch({
 					type: UPDATE_PRINCIPAL,
 					payload: await res.json()
-				})
+				});
+
+				return;
 			}
+
+			await dispatch({
+				type: UPDATE_PRINCIPAL,
+				payload: null
+			});
+
+			return;
 		})
-		.catch(err => dispatch({
+		.catch(async err => await dispatch({
 			type: UPDATE_PRINCIPAL,
 			payload: null
 		}))

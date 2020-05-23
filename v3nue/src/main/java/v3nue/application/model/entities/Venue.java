@@ -22,7 +22,7 @@ public class Venue extends AbstractFactor {
 	@Column(nullable = false, columnDefinition = "MEDIUMINT")
 	private int capacity;
 
-	private String size;
+	private String size;	
 
 	@Column(nullable = false)
 	private String location;

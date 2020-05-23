@@ -34,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 		// @formatter:off
 		return new CustomUserDetails(account.getId(), account.getPassword(),
 				Stream.of(account.getRole())
-					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString()))
+					.map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString().toUpperCase()))
 					.collect(Collectors.toSet()),
 				account.getAuthorities().stream()
 					.map(auth -> auth.getName())

@@ -3,6 +3,11 @@
 	font-family: 'Comfortaa', cursive !important;
 }
 
+a, a:focus, a:hover, a:visited, a:link, a:active {
+	text-decoration: none;
+	color: white;
+}
+
 #loginform, #signupform {
 	opacity: 0.3;
 	transition: opacity 0.2s ease-in-out;
@@ -10,4 +15,17 @@
 
 #loginform:hover, #signupform:hover {
 	opacity: 1;
+}
+
+.text-white {
+	color: white !important;
+}
+
+#sidebar li {
+	transition: all 0.2s ease-in-out;
+	cursor: pointer;
+}
+
+#sidebar li:hover {
+	padding-left: 1rem;
 }

@@ -75,13 +75,37 @@ public class AdminAuthenticationAccountFactory implements EMFactoryForInheritedM
 	@Override
 	public <X extends Account> X convert(Account instance, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		X x = converter.convert(instance, clazz);
+		
+		x.setId(instance.getId());
+		x.setDob(instance.getDob());
+		x.setEmail(instance.getEmail());
+		x.setFullname(instance.getFullname());
+		x.setGender(instance.getGender());
+		x.setRole(instance.getRole());
+		x.setPassword(instance.getPassword());
+		x.setPhone(instance.getPhone());
+		x.setPhoto(instance.getPhoto());
+				
+		return x;
 	}
 
 	@Override
 	public <X extends AccountModel> X convert(AccountModel instance, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		X x = converter.convert(instance, clazz);
+
+		x.setUsername(instance.getUsername());
+		x.setDob(instance.getDob());
+		x.setEmail(instance.getEmail());
+		x.setFullname(instance.getFullname());
+		x.setGender(instance.getGender());
+		x.setRole(instance.getRole());
+		x.setPassword(instance.getPassword());
+		x.setPhone(instance.getPhone());
+		x.setPhoto(instance.getPhoto());
+		
+		return x;
 	}
 
 }

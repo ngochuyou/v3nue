@@ -31,8 +31,8 @@ import v3nue.core.utils.Gender;
  * @author Ngoc Huy
  *
  */
-@Order(value = Ordered.LOWEST_PRECEDENCE)
 @Component
+@Order(value = Ordered.LOWEST_PRECEDENCE)
 public class ApplicationDatabaseInitializer implements ApplicationManager {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());

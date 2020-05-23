@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import LoginForm from '../components/authorize/LoginForm.jsx';
@@ -19,7 +19,7 @@ const authModelName = "model";
 const signupModelName = "signupModel";
 
 class LoginPage extends React.Component {
-
+	
 	componentDidMount() {
 		this.props.dispatch(updateModel(authModelName, new AccountModel()));
 		this.props.dispatch(updateModel(signupModelName, new AccountModel()));
@@ -133,12 +133,11 @@ class LoginPage extends React.Component {
 					return;	
 				}
 
-				default: {
+				default: 
 					props.dispatch(updatePrincipal(null));
 					props.history.goBack();
 
 					return;
-				};
 			}
 		}
 

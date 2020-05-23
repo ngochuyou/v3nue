@@ -6,6 +6,7 @@ import AnonymousComponent from './components/authorize/AnonymousComponent.jsx';
 import ErrorBoundary from './components/system/ErrorBoundary.jsx';
 
 import LoginPage from './pages/LoginPage.jsx';
+import DashBoard from './pages/DashBoard.jsx';
 
 class App extends React.Component {
 	
@@ -13,7 +14,9 @@ class App extends React.Component {
 		return (
 			<ErrorBoundary>
 				<AuthenticatedComponent { ...this.props }>
-
+					<Switch>
+						<Route path="/dashboard" render={ (props) => <DashBoard {...props} /> } />
+					</Switch>
 				</AuthenticatedComponent>
 				<AnonymousComponent { ...this.props }>
 					<Switch>
