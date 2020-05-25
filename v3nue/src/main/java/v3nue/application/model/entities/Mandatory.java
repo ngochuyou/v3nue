@@ -13,7 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
 
 import v3nue.core.model.AbstractFactor;
 
@@ -25,7 +25,7 @@ import v3nue.core.model.AbstractFactor;
 @Table(name = "mandatories")
 public class Mandatory extends AbstractFactor {
 
-	@Size(min = 0)
+	@Min(0)
 	@Column(nullable = false)
 	private float price;
 

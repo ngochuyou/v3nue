@@ -4,7 +4,7 @@ import { server, oauth2 } from '../../config/default.json';
 // utils
 import { getCookie } from '../../utils/CookieUtils.js';
 // low-level component
-class VenueCreationForm extends React.Component {
+class VenueForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -13,6 +13,10 @@ class VenueCreationForm extends React.Component {
 	}
 
 	async onNameInputBlur(e) {
+		if (e.target.value.length === 0) {
+			return;
+		}
+
 		let status = await fetch(`${server.url}/api/factor/unique?type=venue&name=${e.target.value}`, {
 			method: 'GET',
 			mode: 'cors',
@@ -74,7 +78,7 @@ class VenueCreationForm extends React.Component {
 		return (
 			<form className="uk-form-stacked">
 				<fieldset className="uk-fieldset">
-					<legend className="uk-legend">New Venue</legend>
+					<legend className="uk-legend">Venue</legend>
 					<div className="uk-margin">
 						<label
 							className="uk-form-label"
@@ -222,4 +226,4 @@ class VenueCreationForm extends React.Component {
 	}
 }
 
-export default VenueCreationForm;
+export default VenueForm;

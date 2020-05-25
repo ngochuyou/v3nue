@@ -1,30 +1,69 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // components
-import VenueCreationForm from './VenueCreationForm.jsx';
+import VenueForm from './VenueForm.jsx';
 import VenueTable from './VenueTable.jsx';
 // models
 import VenueModel from '../../models/VenueModel.js';
 // actions
 import {
 	updateModel, updateList,
-	postVenue
+	postVenue, editVenue
 } from '../../actions/VenueActions.js';
+import {
+	fetchFactorList, removeFactor,
+	getPaginatingInfo
+} from '../../actions/FactorActions.js';
+// utils
+import PaginatingSet from '../../utils/PaginatingUtils';
 
-const creationFormId = "venue-creation-form";
-const creationFormCloseBtnId = "venue-creation-form-close";
+const formId = "venue-form";
+const formCloseBtnId = "venue-form-close";
+const CREATE = "CREATE";
+const EDIT = "EDIT";
+const type = "venue";
 
 class VenueControl extends React.Component {
-	componentDidMount() {
+	constructor(props) {
+		super(props);
+		this.state = {
+			action: CREATE,
+			paginatingInfo: null
+		}
+	}
+
+	async componentDidMount() {
 		this.props.dispatch(updateModel(new VenueModel()));
-		this.creationFormCloseBtn = document.getElementById(creationFormCloseBtnId);
+		this.props.dispatch(updateList(await fetchFactorList("venue")));
+
+		let result = await getPaginatingInfo(type);
+
+		if (result.isOkay()) {
+			this.setState({
+				paginatingInfo: new PaginatingSet(result.model)
+			});
+		}
+
+		this.creationFormCloseBtn = document.getElementById(formCloseBtnId);
 	}
 
 	onModelUpdate(model) {
 		this.props.dispatch(updateModel(model));
 	}
 
-	async onSubmitModel() {
+	onSubmitModel() {
+		if (this.state.action === CREATE) {
+			this.createVenue();
+
+			return;
+		}
+
+		this.editVenue();
+
+		return;
+	}
+
+	async createVenue() {
 		const { props } = this;
 		let model = new VenueModel({
 			...props.model,
@@ -38,11 +77,70 @@ class VenueControl extends React.Component {
 				...props.list, model
 			]));
 			this.creationFormCloseBtn.click();
+
 			let result = await postVenue(model);
-			console.log(result);
-			// model = new VenueModel();
+			let list = [...props.list];
+
+			if (result.isOkay()) {
+				list[list.length] = result.model;
+				model = new VenueModel();
+			} else {
+				list.splice(list.length, 1);
+			}
+
+			props.dispatch(updateList(list));
 		}
+
 		props.dispatch(updateModel(model));
+	}
+
+	async editVenue() {
+		const { props } = this;
+		let model = new VenueModel(props.model);
+		let result = model.validate();
+
+		if (result) {
+			props.dispatch(updateList(props.list
+				.map(ele => ele.id === model.id ? model : ele)));
+			this.creationFormCloseBtn.click();
+
+			let result = await editVenue(model);
+
+			if (result.isOkay()) {
+				model = new VenueModel();
+			} else {
+				props.dispatch(updateList([...props.list]));
+			}
+		}
+
+		props.dispatch(updateModel(model));
+	}
+
+	onCreateButtonClick() {
+		this.props.dispatch(updateModel(new VenueModel()));
+		this.setState({
+			action: CREATE
+		});
+	}
+
+	onListElementSelect(ele) {
+		this.props.dispatch(updateModel(new VenueModel(ele)));
+		this.setState({
+			action: EDIT
+		});
+	}
+
+	async onRemove(model) {
+		const { props } = this;
+
+		props.dispatch(updateList(props.list
+			.filter(ele => ele.id !== model.id)));
+
+		let result = await removeFactor(model.id, type);
+
+		if (!result.isOkay()) {
+			props.dispatch(updateList(props.list));
+		}
 	}
 
 	render() {
@@ -53,28 +151,37 @@ class VenueControl extends React.Component {
 				<div className="uk-text-right">
 					<button
 						className="uk-button uk-button-primary uk-margin-small-right"
-						uk-toggle={`target: #${creationFormId}`}
-						type="button">Add
+						uk-toggle={`target: #${formId}`}
+						type="button"
+						onClick={ this.onCreateButtonClick.bind(this) }>Add
 					</button>
 				</div>
 				<div className="uk-padding-small uk-padding-remove-horizontal">
-					<VenueTable list={ props.list }/>
+					<VenueTable
+						onRowSelect={ this.onListElementSelect.bind(this) }
+						onRemove={ this.onRemove.bind(this) }
+						formId={ formId } 
+						list={ props.list }
+					/>
 				</div>
 				<div
-					id={creationFormId}
+					id={formId}
 					uk-modal="" className="uk-flex-top"
 				>
 					<div className="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
 						<button
-							id={creationFormCloseBtnId}
+							id={formCloseBtnId}
 							className="uk-modal-close-outside"
 							type="button" uk-close="">
 						</button>
-						<VenueCreationForm
+						<VenueForm
 							model={ props.model }
 							onModelUpdate={ this.onModelUpdate.bind(this) }
 							onSubmitModel={ this.onSubmitModel.bind(this) }
 						/>
+						<div className="uk-text-right">
+							
+						</div>
 					</div>
 				</div>
 			</div>

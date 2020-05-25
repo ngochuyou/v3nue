@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
 
 import v3nue.core.model.AbstractFactor;
 
@@ -24,15 +24,15 @@ import v3nue.core.model.AbstractFactor;
 @Table(name = "contracts")
 public class Contract extends AbstractFactor {
 
-	@Size(min = 0)
+	@Min(0)
 	@Column(nullable = false)
 	private float agreedAmount;
 
-	@Size(min = 0)
+	@Min(0)
 	@Column(nullable = false)
 	private float depositAmount;
 
-	@Size(min = 0)
+	@Min(0)
 	@Column(nullable = false)
 	private float totalAmount;
 

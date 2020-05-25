@@ -13,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RestController;
 
 import v3nue.application.OAuth2AuthenticationBasedEMFactoryManagerProvider;
 import v3nue.core.dao.BaseDAO;
@@ -26,7 +26,7 @@ import v3nue.core.security.server.authorization.CustomUserDetails;
  *
  */
 @Transactional
-@Controller
+@RestController("/api")
 public class BaseController {
 
 	protected final String READ = "READ";
@@ -182,11 +182,54 @@ public class BaseController {
 	 * 
 	 * @return calculated index
 	 */
-	protected int calculateFirstIndex(int page, int amountOfElementsPerPage) {
+	protected int calculateFirstIndex(int page, double amountOfElementsPerPage) {
 		if (page == 0)
 			return 0;
 
-		return page * amountOfElementsPerPage;
+		return (int) Math.round(page * amountOfElementsPerPage);
+	}
+
+	/**
+	 * A utility function to calculate the pages in an pagination database
+	 * 
+	 * @param page                    Ex: page 1, page 2
+	 * @param amountOfElementsPerPage the amount of elements that a page contains
+	 * 
+	 * @return total pages
+	 */
+	protected double calculatePages(long totalAmount, double amountOfElementsPerPage) {
+		if (totalAmount == 0)
+			return 0;
+
+		return Math.ceil(totalAmount / amountOfElementsPerPage);
+	}
+}
+
+class PaginatingSet {
+	private double total;
+
+	private int amountPerPage;
+
+	public PaginatingSet(double total, int amountPerPage) {
+		super();
+		this.total = total;
+		this.amountPerPage = amountPerPage;
+	}
+
+	public double getTotal() {
+		return total;
+	}
+
+	public void setTotal(double total) {
+		this.total = total;
+	}
+
+	public int getAmountPerPage() {
+		return amountPerPage;
+	}
+
+	public void setAmountPerPage(int amountPerPage) {
+		this.amountPerPage = amountPerPage;
 	}
 
 }

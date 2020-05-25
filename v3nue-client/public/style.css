@@ -29,3 +29,20 @@ a, a:focus, a:hover, a:visited, a:link, a:active {
 #sidebar li:hover {
 	padding-left: 1rem;
 }
+
+.icon {
+	width: 45px;
+	height: 45px;
+	position: relative;
+}
+
+.icon > * {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.pointer {
+	cursor: pointer;
+}

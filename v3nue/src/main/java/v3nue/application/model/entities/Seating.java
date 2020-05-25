@@ -6,7 +6,8 @@ package v3nue.application.model.entities;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import v3nue.core.model.AbstractFactor;
 
@@ -18,7 +19,8 @@ import v3nue.core.model.AbstractFactor;
 @Table(name = "seatings")
 public class Seating extends AbstractFactor {
 	// Maximum Value UNSIGNED of MEDIUMINT by MySQL
-	@Size(min = 0, max = 16777215)
+	@Min(0)
+	@Max(16777215)
 	@Column(nullable = false, columnDefinition = "MEDIUMINT")
 	private int capacity;
 

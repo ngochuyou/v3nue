@@ -103,10 +103,8 @@ public class BaseDAO {
 	/**
 	 * @param object to insert.
 	 * @param clazz  object's class.
-	 * @param rules  business rules applied on this entity
 	 * 
 	 * @return the action result with the status code along with the object.
-	 * @throws QueryBuilderException
 	 */
 	@SuppressWarnings({ "unchecked" })
 	public <T extends AbstractEntity> DatabaseOperationResult<T> insert(T object, Class<T> clazz) {
@@ -138,10 +136,8 @@ public class BaseDAO {
 	/**
 	 * @param object updated object
 	 * @param clazz  type of object
-	 * @param rules  specifications of object
 	 * 
 	 * @return the object if found otherwise null
-	 * @throws QueryBuilderException
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractEntity> DatabaseOperationResult<T> update(T object, Class<T> clazz) {
@@ -164,10 +160,35 @@ public class BaseDAO {
 			return DatabaseOperationResult.error(object, result.getMessages(), result.getStatus());
 		}
 
-		ss.evict(object);
+		ss.detach(instance);
 		ss.update(object);
 
 		return DatabaseOperationResult.success(object, result.getMessages());
+	}
+
+	/**
+	 * @param object removed object
+	 * @param clazz  type of object
+	 * 
+	 * @return the <code>DatabaseOperationResult</code>
+	 */
+	public <T extends AbstractEntity> DatabaseOperationResult<T> remove(Object id, Class<T> clazz) {
+		Session ss = factory.getCurrentSession();
+		// check the parameters
+		if (id == null || clazz == null) {
+			return DatabaseOperationResult.error(null, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+		}
+		// check if entity exists
+		T instance = this.findById(id, clazz);
+
+		if (instance == null) {
+			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+		}
+
+		instance.setActive(false);
+		ss.update(instance);
+
+		return DatabaseOperationResult.success(instance, new HashMap<>(Map.of("id", "Document removed")));
 	}
 
 }

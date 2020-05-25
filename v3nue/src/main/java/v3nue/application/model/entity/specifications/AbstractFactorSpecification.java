@@ -50,13 +50,14 @@ public class AbstractFactorSpecification extends CompositeSpecificationWithDAO<A
 		Root<? extends AbstractFactor> root = query.from(entity.getClass());
 
 		// @formatter:off
-		query.select(builder.count(root));
-		query.where(builder
+		query.select(builder.count(root))
+			.where(builder
 				.and(builder.notEqual(root.get("id"), entity.getId()), 
-						builder.equal(root.get("name"), entity.getName())));
+						builder.equal(root.get("name"), entity.getName())),
+						builder.equal(root.get("isActive"), true));
 		// @formatter:on
 		if (dao.count(query) != 0) {
-			messages.put("name", "name must be unique.");
+			messages.put("name", "Name must be unique.");
 			status = CONFLICT;
 		}
 

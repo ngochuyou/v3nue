@@ -42,3 +42,26 @@ export function postVenue(model) {
 		async err => Result.error(500, "Server failure")
 	)
 }
+
+export function editVenue(model) {
+	if (!model) {
+		return Result.error(null, "Model can not be empty", "client-400");
+	}
+
+	return fetch(`${server.url}/api/factor/venue`, {
+		method: 'PUT',
+		mode: 'cors',
+		headers: {
+			Authorization: `Bearer ${getCookie(oauth2.token.name[0])}`,
+			'Content-Type': 'application/json',
+			Accept: 'application/json'
+		},
+		body: JSON.stringify(model)
+	})
+	.then(
+		async res => res.ok && res.status === 200 ? Result.success(await res.json(), "OK") : Result.error(null, res.text(), res.status)
+	)
+	.catch(
+		async err => Result.error(500, "Server failure")
+	)
+}
