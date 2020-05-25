@@ -146,7 +146,8 @@ public class FactorsController extends BaseController {
 		query.select(builder.count(root))
 			.where(builder.equal(root.get("isActive"), true));
 		// @formatter:on
-		return handle(new PaginatingSet(calculatePages(dao.count(query), amountPerPage * 1.0), amountPerPage), 200, false);
+		return handle(new PaginatingSet(calculatePages(dao.count(query), amountPerPage * 1.0), amountPerPage), 200,
+				false);
 	}
 
 	@PostMapping("/venue")
@@ -170,13 +171,13 @@ public class FactorsController extends BaseController {
 
 	@PutMapping("/venue")
 	@PreAuthorize(HASROLE_ADMIN)
-	public ResponseEntity<?> updateVenue(@RequestBody(required = true) Venue model) {
+	public ResponseEntity<?> updateVenue(@RequestBody(required = true) Venue model)
+			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		super.checkAccountScopes(WRITE);
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Venue.class);
 		Venue newVenue = (Venue) factory.produce((Model) model);
-
 		DatabaseOperationResult<Venue> result = dao.update(newVenue, Venue.class);
 
 		if (result.isOkay()) {

@@ -14,6 +14,8 @@ import {
 	fetchFactorList, removeFactor,
 	getPaginatingInfo
 } from '../../actions/FactorActions.js';
+// ui
+import Paginator from '../ui/Paginator.jsx';
 // utils
 import PaginatingSet from '../../utils/PaginatingUtils';
 
@@ -35,7 +37,11 @@ class VenueControl extends React.Component {
 	async componentDidMount() {
 		this.props.dispatch(updateModel(new VenueModel()));
 		this.props.dispatch(updateList(await fetchFactorList("venue")));
+		this.fetchPaginatingInfo();
+		this.creationFormCloseBtn = document.getElementById(formCloseBtnId);
+	}
 
+	async fetchPaginatingInfo() {
 		let result = await getPaginatingInfo(type);
 
 		if (result.isOkay()) {
@@ -43,8 +49,6 @@ class VenueControl extends React.Component {
 				paginatingInfo: new PaginatingSet(result.model)
 			});
 		}
-
-		this.creationFormCloseBtn = document.getElementById(formCloseBtnId);
 	}
 
 	onModelUpdate(model) {
@@ -92,6 +96,7 @@ class VenueControl extends React.Component {
 		}
 
 		props.dispatch(updateModel(model));
+		this.fetchPaginatingInfo();
 	}
 
 	async editVenue() {
@@ -103,7 +108,7 @@ class VenueControl extends React.Component {
 			props.dispatch(updateList(props.list
 				.map(ele => ele.id === model.id ? model : ele)));
 			this.creationFormCloseBtn.click();
-
+			
 			let result = await editVenue(model);
 
 			if (result.isOkay()) {
@@ -141,6 +146,20 @@ class VenueControl extends React.Component {
 		if (!result.isOkay()) {
 			props.dispatch(updateList(props.list));
 		}
+
+		this.fetchPaginatingInfo();
+	}
+
+	async onPageSelect(page) {
+		if (this.state.paginatingInfo.currentPage !== page) {
+			this.props.dispatch(updateList(await fetchFactorList("venue", page)));
+			this.setState({
+				paginatingInfo: {
+					...this.state.paginatingInfo,
+					currentPage: page
+				}
+			});
+		}
 	}
 
 	render() {
@@ -163,6 +182,10 @@ class VenueControl extends React.Component {
 						formId={ formId } 
 						list={ props.list }
 					/>
+					<Paginator
+						paginatingSet={ this.state.paginatingInfo }
+						onPageSelect={ this.onPageSelect.bind(this) }
+					/>
 				</div>
 				<div
 					id={formId}
@@ -179,9 +202,6 @@ class VenueControl extends React.Component {
 							onModelUpdate={ this.onModelUpdate.bind(this) }
 							onSubmitModel={ this.onSubmitModel.bind(this) }
 						/>
-						<div className="uk-text-right">
-							
-						</div>
 					</div>
 				</div>
 			</div>

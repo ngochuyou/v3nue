@@ -47,7 +47,7 @@ export function editVenue(model) {
 	if (!model) {
 		return Result.error(null, "Model can not be empty", "client-400");
 	}
-
+	
 	return fetch(`${server.url}/api/factor/venue`, {
 		method: 'PUT',
 		mode: 'cors',

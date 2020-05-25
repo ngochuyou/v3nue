@@ -4,6 +4,7 @@ export default class AbstractModel {
 		this.id = props.id || "";
 		this.createdDate = props.createdDate || Date.now();
 		this.updatedDate = props.updatedDate || Date.now();
+		this.isActive = props.isActive || true;
 		this.messages = {};
 	}
 

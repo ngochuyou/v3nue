@@ -11,6 +11,8 @@ import javax.persistence.MappedSuperclass;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * An abstract class extended from Model to identify a Model as an Entity
  * 
@@ -28,6 +30,7 @@ public abstract class AbstractEntity implements Model {
 	@Column(name = "updated_date", nullable = false)
 	protected Date updatedDate;
 
+	@JsonProperty
 	@Column(name = "is_active", nullable = false)
 	protected boolean isActive;
 
