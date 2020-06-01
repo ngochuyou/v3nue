@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Admin;
-import v3nue.application.model.factory.converters.AdminEMConverter;
 import v3nue.application.model.models.AdminModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,36 +17,21 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Admin.class)
-public class AdminAuthenticationAdminFactory implements EMFactoryForInheritedModels<Admin, AdminModel> {
+public class AdminAuthenticationAdminFactory implements EMFactory<Admin, AdminModel> {
 
 	@Autowired
 	private AdminAuthenticationAccountFactory accountFactory;
 
-	@Autowired
-	private AdminEMConverter converter;
-
 	@Override
-	public Admin produce(AdminModel model) {
+	public <X extends Admin> X produce(AdminModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.convert(accountFactory.produce(model), Admin.class);
+		return accountFactory.produce(model, clazz);
 	}
 
 	@Override
-	public AdminModel produce(Admin entity) {
+	public <X extends AdminModel> X produce(Admin entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.convert(accountFactory.produce(entity), AdminModel.class);
-	}
-
-	@Override
-	public <X extends Admin> X convert(Admin instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends AdminModel> X convert(AdminModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		return accountFactory.produce(entity, clazz);
 	}
 
 }

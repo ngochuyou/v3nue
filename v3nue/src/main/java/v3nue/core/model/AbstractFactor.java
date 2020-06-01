@@ -31,7 +31,7 @@ public class AbstractFactor extends AbstractEntity {
 	protected String createdBy;
 
 	@Size(min = 1, max = 255)
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false)
 	protected String name;
 
 	public String getId() {

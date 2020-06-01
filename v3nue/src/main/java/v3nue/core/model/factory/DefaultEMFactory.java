@@ -6,17 +6,18 @@ import v3nue.core.model.AbstractEntity;
 import v3nue.core.model.Model;
 
 @Component("defaultEMFactory")
+@SuppressWarnings("unchecked")
 public class DefaultEMFactory implements EMFactory<AbstractEntity, Model> {
 
 	@Override
-	public AbstractEntity produce(Model model) {
-		return (AbstractEntity) model;
+	public <X extends AbstractEntity> X produce(Model model, Class<X> clazz) {
+		return (X) model;
 	}
 
 	@Override
-	public Model produce(AbstractEntity entity) {
+	public <X extends Model> X produce(AbstractEntity entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return entity;
+		return (X) entity;
 	}
 
 }

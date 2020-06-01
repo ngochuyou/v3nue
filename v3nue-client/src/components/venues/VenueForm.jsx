@@ -13,11 +13,11 @@ class VenueForm extends React.Component {
 	}
 
 	async onNameInputBlur(e) {
-		if (e.target.value.length === 0) {
+		if (e.target.value.length === 0 || !this.props.model) {
 			return;
 		}
 
-		let status = await fetch(`${server.url}/api/factor/unique?type=venue&name=${e.target.value}`, {
+		let status = await fetch(`${server.url}/api/factor/unique?type=venue&name=${e.target.value}&id=${this.props.model.id}`, {
 			method: 'GET',
 			mode: 'cors',
 			headers: {
@@ -65,7 +65,7 @@ class VenueForm extends React.Component {
 			submitFunction();
 		}
 	}
-
+	
 	render() {
 		const props = { ...this.props };
 
@@ -79,6 +79,27 @@ class VenueForm extends React.Component {
 			<form className="uk-form-stacked">
 				<fieldset className="uk-fieldset">
 					<legend className="uk-legend">Venue</legend>
+					<div className="uk-margin">
+						<label
+							className="uk-form-label"
+							forhtml="supplier-form-id">
+							ID
+						</label>
+						<div className="uk-form-controls">
+							<input
+								disabled="disabled"
+								name="id"
+								className="uk-input"
+								id="supplier-form-id"
+								type="text"
+								placeholder="Auto generated"
+								value={ model.id }
+							/>
+							<p className="uk-text-danger uk-margin-small-top">
+								{ model.messages.id }
+							</p>
+						</div>
+					</div>
 					<div className="uk-margin">
 						<label
 							className="uk-form-label"

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import v3nue.application.OAuth2AuthenticationBasedEMFactoryManagerProvider;
+import v3nue.core.ModelManager;
 import v3nue.core.dao.BaseDAO;
 import v3nue.core.model.Model;
 import v3nue.core.security.server.authorization.CustomUserDetails;
@@ -52,7 +53,10 @@ public class BaseController {
 
 	@Autowired
 	protected OAuth2AuthenticationBasedEMFactoryManagerProvider oauth2BasedFactoryManagerProvider;
-
+	
+	@Autowired
+	protected ModelManager modelManager;
+	
 	/**
 	 * Open a session with optional {@link FlushMode}
 	 * 
@@ -188,39 +192,24 @@ public class BaseController {
 
 		return (int) Math.round(page * amountOfElementsPerPage);
 	}
-
-	/**
-	 * A utility function to calculate the pages in an pagination database
-	 * 
-	 * @param page                    Ex: page 1, page 2
-	 * @param amountOfElementsPerPage the amount of elements that a page contains
-	 * 
-	 * @return total pages
-	 */
-	protected double calculatePages(long totalAmount, double amountOfElementsPerPage) {
-		if (totalAmount == 0)
-			return 0;
-
-		return Math.ceil(totalAmount / amountOfElementsPerPage);
-	}
 }
 
 class PaginatingSet {
-	private double total;
+	private long total;
 
 	private int amountPerPage;
 
-	public PaginatingSet(double total, int amountPerPage) {
+	public PaginatingSet(long total, int amountPerPage) {
 		super();
 		this.total = total;
 		this.amountPerPage = amountPerPage;
 	}
 
-	public double getTotal() {
+	public long getTotal() {
 		return total;
 	}
 
-	public void setTotal(double total) {
+	public void setTotal(long total) {
 		this.total = total;
 	}
 

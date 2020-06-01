@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Customer;
-import v3nue.application.model.factory.converters.CustomerEMConverter;
 import v3nue.application.model.models.CustomerModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,44 +17,29 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Customer.class)
-public class AdminAuthenticationCustomerFactory implements EMFactoryForInheritedModels<Customer, CustomerModel> {
-	
+public class AdminAuthenticationCustomerFactory implements EMFactory<Customer, CustomerModel> {
+
 	@Autowired
 	private AdminAuthenticationAccountFactory accountFactory;
-	
-	@Autowired
-	private CustomerEMConverter converter;
-	
+
 	@Override
-	public Customer produce(CustomerModel model) {
+	public <X extends Customer> X produce(CustomerModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		Customer customer = accountFactory.convert(accountFactory.produce(model), Customer.class);
-		
+		X customer = accountFactory.produce(model, clazz);
+
 		customer.setPrestigePoint(model.getPrestigePoint());
-		
+
 		return customer;
 	}
 
 	@Override
-	public CustomerModel produce(Customer customer) {
+	public <X extends CustomerModel> X produce(Customer customer, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		CustomerModel model = accountFactory.convert(accountFactory.produce(customer), CustomerModel.class);
-		
+		X model = accountFactory.produce(customer, clazz);
+
 		model.setPrestigePoint(customer.getPrestigePoint());
-		
+
 		return model;
-	}
-
-	@Override
-	public <X extends Customer> X convert(Customer instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends CustomerModel> X convert(CustomerModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
 	}
 
 }

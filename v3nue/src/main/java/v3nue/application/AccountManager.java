@@ -18,6 +18,10 @@ import v3nue.application.model.entities.Account;
 import v3nue.application.model.entities.Admin;
 import v3nue.application.model.entities.Customer;
 import v3nue.application.model.entities.Personnel;
+import v3nue.application.model.models.AccountModel;
+import v3nue.application.model.models.AdminModel;
+import v3nue.application.model.models.CustomerModel;
+import v3nue.application.model.models.PersonnelModel;
 import v3nue.core.ApplicationManager;
 import v3nue.core.utils.AccountRole;
 
@@ -44,11 +48,25 @@ public class AccountManager implements ApplicationManager {
 	 */
 	private Map<AccountRole, Class<? extends Account>> typeMap = new HashMap<>();
 
+	private Map<AccountRole, Class<? extends AccountModel>> modelTypeMap = new HashMap<>();
+
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
 		this.mapTypes();
+		this.mapModelTypes();
 		this.mapAccessibilities();
+	}
+
+	/**
+	 * Initialize for AccountRoles
+	 */
+	public void mapModelTypes() {
+		modelTypeMap.put(AccountRole.Admin, AdminModel.class);
+		modelTypeMap.put(AccountRole.Customer, CustomerModel.class);
+		modelTypeMap.put(AccountRole.Employee, PersonnelModel.class);
+		modelTypeMap.put(AccountRole.Manager, PersonnelModel.class);
+		modelTypeMap.put(AccountRole.Anonymous, null);
 	}
 
 	/**
@@ -105,5 +123,10 @@ public class AccountManager implements ApplicationManager {
 
 		return (typeMap.containsKey(enumType) ? typeMap.get(enumType) : Account.class);
 	}
-	
+
+	public Class<? extends AccountModel> getAccountModelClass(AccountRole enumType) {
+
+		return (modelTypeMap.containsKey(enumType) ? modelTypeMap.get(enumType) : AccountModel.class);
+	}
+
 }

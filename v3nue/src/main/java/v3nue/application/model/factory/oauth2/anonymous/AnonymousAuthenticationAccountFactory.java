@@ -7,10 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Account;
-import v3nue.application.model.factory.converters.AccountEMConverter;
 import v3nue.application.model.models.AccountModel;
 import v3nue.core.model.factory.AbstractEntityEMFactory;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 import v3nue.core.utils.AccountRole;
 import v3nue.core.utils.Gender;
@@ -21,18 +20,15 @@ import v3nue.core.utils.Gender;
  */
 @Component
 @Factory(entity = Account.class)
-public class AnonymousAuthenticationAccountFactory implements EMFactoryForInheritedModels<Account, AccountModel> {
+public class AnonymousAuthenticationAccountFactory implements EMFactory<Account, AccountModel> {
 
 	@Autowired
 	private AbstractEntityEMFactory abstractEntityEMFactory;
 
-	@Autowired
-	private AccountEMConverter converter;
-
 	@Override
-	public Account produce(AccountModel model) {
+	public <X extends Account> X produce(AccountModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		Account account = abstractEntityEMFactory.convert(abstractEntityEMFactory.produce(model), Account.class);
+		X account = abstractEntityEMFactory.produce(model, clazz);
 
 		account.setId(model.getUsername());
 		account.setActive(model.isActive());
@@ -58,21 +54,9 @@ public class AnonymousAuthenticationAccountFactory implements EMFactoryForInheri
 	}
 
 	@Override
-	public AccountModel produce(Account account) {
+	public <X extends AccountModel> X produce(Account account, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return new AccountModel();
-	}
-
-	@Override
-	public <X extends Account> X convert(Account instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends AccountModel> X convert(AccountModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		return abstractEntityEMFactory.produce(account, clazz);
 	}
 
 }

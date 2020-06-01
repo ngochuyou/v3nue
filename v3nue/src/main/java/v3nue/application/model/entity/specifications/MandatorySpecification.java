@@ -47,6 +47,7 @@ public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandat
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<MandatoryType> root = query.from(MandatoryType.class);
 
+			query.select(builder.count(root));
 			query.where(builder.equal(root.get("id"), type.getId()));
 
 			if (dao.count(query) == 0) {

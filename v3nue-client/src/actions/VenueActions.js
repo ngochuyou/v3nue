@@ -20,7 +20,7 @@ export function updateList(list) {
 	}
 }
 
-export function postVenue(model) {
+export function createVenue(model) {
 	if (!model) {
 		return Result.error(null, "Model can not be empty", "client-400");
 	}

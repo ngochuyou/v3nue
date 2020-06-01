@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 
-const confirmDialogId = "venue-confirmDialog";
-const confirmDialogCloseBtnId = "venue-confirmDialogCloseBtn";
+const confirmDialogId = "supplier-confirmDialog";
+const confirmDialogCloseBtnId = "supplier-confirmDialogCloseBtn";
 
 // low-level component
-class VenueTable extends React.Component {
+class SupplierTable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -46,7 +46,7 @@ class VenueTable extends React.Component {
 		if (!list || !Array.isArray(list)) {
 			return null;
 		}
-
+		
 		return (
 			<Fragment>
 				<table className="uk-table uk-table-justify uk-table-striped">
@@ -54,8 +54,8 @@ class VenueTable extends React.Component {
 						<tr>
 							<th className="uk-width-small">ID</th>
 							<th>Name</th>
-							<th>Location</th>
-							<th>Price</th>
+							<th>Phone</th>
+							<th>Specialization</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -69,8 +69,8 @@ class VenueTable extends React.Component {
 								>
 									<td className="uk-text-truncate">{ele.id}</td>
 									<td>{ele.name}</td>
-									<td>{ele.location}</td>
-									<td>{ele.price}</td>
+									<td>{ele.phone}</td>
+									<td>{ele.specialization}</td>
 									<td>
 										<u
 											className="uk-text-primary pointer uk-margin-right"
@@ -125,4 +125,4 @@ class VenueTable extends React.Component {
 	}
 }
 
-export default VenueTable;
+export default SupplierTable;

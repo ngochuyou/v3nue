@@ -94,8 +94,7 @@ public class AccountController extends BaseController {
 		super.openSession();
 		model.setRole(AccountRole.Customer.toString());
 
-		Customer newAccount = anonymousCustomerFactory
-				.produce(anonymousCustomerFactory.convert(model, CustomerModel.class));
+		Customer newAccount = anonymousCustomerFactory.produce(model, Customer.class);
 
 		newAccount = accountService.doMandatory(newAccount);
 		newAccount.setAuthorities(Stream.of(ApplicationDatabaseInitializer.READ, ApplicationDatabaseInitializer.WRITE)
@@ -104,7 +103,7 @@ public class AccountController extends BaseController {
 		DatabaseOperationResult<Account> result = dao.insert(newAccount, Account.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(customerAuthenticationCustomerFactory.produce(newAccount));
+			return handleSuccess(customerAuthenticationCustomerFactory.produce(newAccount, CustomerModel.class));
 		}
 
 		return handle("ERROR from server", result.getStatus(), false);
@@ -125,7 +124,7 @@ public class AccountController extends BaseController {
 		EMFactory factory = oauth2BasedFactoryManagerProvider.getEMFactoryManager(account.getRole())
 				.getEMFactory(accountManager.getAccountClass(account.getRole()));
 
-		return handleSuccess(factory.produce(account));
+		return handleSuccess(factory.produce(account, accountManager.getAccountModelClass(account.getRole())));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -142,7 +141,7 @@ public class AccountController extends BaseController {
 		EMFactory factory = oauth2BasedFactoryManagerProvider.getEMFactoryManager()
 				.getEMFactory(accountManager.getAccountClass(account.getRole()));
 
-		return handleSuccess(factory.produce(account));
+		return handleSuccess(factory.produce(account, accountManager.getAccountClass(account.getRole())));
 	}
 
 }

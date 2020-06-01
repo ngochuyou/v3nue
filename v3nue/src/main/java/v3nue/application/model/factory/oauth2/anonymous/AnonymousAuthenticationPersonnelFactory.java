@@ -3,13 +3,14 @@
  */
 package v3nue.application.model.factory.oauth2.anonymous;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Personnel;
-import v3nue.application.model.factory.converters.PersonnelEMConverter;
 import v3nue.application.model.models.PersonnelModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,40 +19,32 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Personnel.class)
-public class AnonymousAuthenticationPersonnelFactory implements EMFactoryForInheritedModels<Personnel, PersonnelModel> {
+public class AnonymousAuthenticationPersonnelFactory implements EMFactory<Personnel, PersonnelModel> {
 
 	@Autowired
 	private AnonymousAuthenticationAccountFactory superFactory;
 
-	@Autowired
-	private PersonnelEMConverter converter;
-
 	@Override
-	public Personnel produce(PersonnelModel model) {
+	public <X extends Personnel> X produce(PersonnelModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return new Personnel();
+		try {
+			return clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public PersonnelModel produce(Personnel entity) {
+	public <X extends PersonnelModel> X produce(Personnel entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		PersonnelModel model = superFactory.convert(superFactory.produce(entity), PersonnelModel.class);
+		X model = superFactory.produce(entity, clazz);
 
 		model.setSpecialization(entity.getSpecialization());
 
 		return model;
-	}
-
-	@Override
-	public <X extends Personnel> X convert(Personnel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends PersonnelModel> X convert(PersonnelModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
 	}
 
 }

@@ -2,7 +2,9 @@ package v3nue.core;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,6 +37,8 @@ public class ModelManager implements ApplicationManager {
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	private Map<Class<? extends AbstractEntity>, Class<? extends Model>> relationMap = new HashMap<>();
+
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
@@ -48,8 +52,11 @@ public class ModelManager implements ApplicationManager {
 				null, false)
 					.forEach(bean -> {
 						try {
-							entityTree.addTree((Class<? extends AbstractEntity>) Class.forName(bean.getBeanClassName()));
+							Class<? extends AbstractEntity> clazz = (Class<? extends AbstractEntity>) Class.forName(bean.getBeanClassName());
+							
+							entityTree.addTree(clazz);
 							logger.info(bean.getBeanClassName() + " has bean added to EntityTree");
+							relationMap.put(clazz, clazz);
 						} catch (ClassNotFoundException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -75,6 +82,7 @@ public class ModelManager implements ApplicationManager {
 							}
 
 							logger.info(bean.getBeanClassName() + " has bean added to ModelSet");
+							relationMap.put(anno.relation(), modelClass);
 							modelSet.add(modelClass);
 							modelizedEntityClasses.add(anno.relation());
 						} catch (Exception e) {
@@ -125,4 +133,8 @@ public class ModelManager implements ApplicationManager {
 		return entityTree;
 	}
 
+	public <T extends Model> Class<T> forModelClass(Class<? extends AbstractEntity> clazz) {
+
+		return (Class<T>) relationMap.get(clazz);
+	}
 }

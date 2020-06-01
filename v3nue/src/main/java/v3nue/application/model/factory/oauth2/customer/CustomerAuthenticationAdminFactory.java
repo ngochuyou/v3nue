@@ -3,13 +3,13 @@
  */
 package v3nue.application.model.factory.oauth2.customer;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.reflect.InvocationTargetException;
+
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Admin;
-import v3nue.application.model.factory.converters.AdminEMConverter;
 import v3nue.application.model.models.AdminModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,33 +18,32 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Admin.class)
-public class CustomerAuthenticationAdminFactory implements EMFactoryForInheritedModels<Admin, AdminModel> {
-
-	@Autowired
-	private AdminEMConverter converter;
+public class CustomerAuthenticationAdminFactory implements EMFactory<Admin, AdminModel> {
 
 	@Override
-	public Admin produce(AdminModel model) {
+	public <X extends Admin> X produce(AdminModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return new Admin();
+		try {
+			return clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public AdminModel produce(Admin entity) {
+	public <X extends AdminModel> X produce(Admin entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return new AdminModel();
-	}
-
-	@Override
-	public <X extends Admin> X convert(Admin instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends AdminModel> X convert(AdminModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		try {
+			return clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -24,10 +24,10 @@ public class Supplier extends AbstractFactor {
 	private String phone;
 
 	@Email
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String email;
 
-	private String specialzation;
+	private String specialization;
 
 	public String getPhone() {
 		return phone;
@@ -45,12 +45,12 @@ public class Supplier extends AbstractFactor {
 		this.email = email;
 	}
 
-	public String getSpecialzation() {
-		return specialzation;
+	public String getSpecialization() {
+		return specialization;
 	}
 
-	public void setSpecialzation(String specialzation) {
-		this.specialzation = specialzation;
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
 	}
 
 }

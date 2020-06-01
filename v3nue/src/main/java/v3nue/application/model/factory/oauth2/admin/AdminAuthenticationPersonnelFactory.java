@@ -7,9 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Personnel;
-import v3nue.application.model.factory.converters.PersonnelEMConverter;
 import v3nue.application.model.models.PersonnelModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,18 +17,15 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Personnel.class)
-public class AdminAuthenticationPersonnelFactory implements EMFactoryForInheritedModels<Personnel, PersonnelModel> {
+public class AdminAuthenticationPersonnelFactory implements EMFactory<Personnel, PersonnelModel> {
 
 	@Autowired
 	private AdminAuthenticationAccountFactory accountFactory;
 
-	@Autowired
-	private PersonnelEMConverter converter;
-
 	@Override
-	public Personnel produce(PersonnelModel model) {
+	public <X extends Personnel> X produce(PersonnelModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		Personnel personnel = accountFactory.convert(accountFactory.produce(model), Personnel.class);
+		X personnel = accountFactory.produce(model, clazz);
 
 		personnel.setSpecialization(model.getSpecialization());
 
@@ -37,25 +33,13 @@ public class AdminAuthenticationPersonnelFactory implements EMFactoryForInherite
 	}
 
 	@Override
-	public PersonnelModel produce(Personnel entity) {
+	public <X extends PersonnelModel> X produce(Personnel entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		PersonnelModel model = accountFactory.convert(accountFactory.produce(entity), PersonnelModel.class);
+		X model = accountFactory.produce(entity, clazz);
 
 		model.setSpecialization(entity.getSpecialization());
 
 		return model;
-	}
-
-	@Override
-	public <X extends Personnel> X convert(Personnel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends PersonnelModel> X convert(PersonnelModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
 	}
 
 }

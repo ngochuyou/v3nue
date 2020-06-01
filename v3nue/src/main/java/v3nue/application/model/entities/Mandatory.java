@@ -38,6 +38,7 @@ public class Mandatory extends AbstractFactor {
 		inverseJoinColumns = @JoinColumn(name = "supplier_id"))
 	private Set<Supplier> suppliers;
 	// @formatter:on
+
 	public float getPrice() {
 		return price;
 	}

@@ -3,13 +3,13 @@
  */
 package v3nue.application.model.factory.oauth2.anonymous;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.lang.reflect.InvocationTargetException;
+
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Customer;
-import v3nue.application.model.factory.converters.CustomerEMConverter;
 import v3nue.application.model.models.CustomerModel;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 
 /**
@@ -18,40 +18,32 @@ import v3nue.core.model.factory.Factory;
  */
 @Component
 @Factory(entity = Customer.class)
-public class AnonymousAuthenticationCustomerFactory implements EMFactoryForInheritedModels<Customer, CustomerModel> {
-
-	@Autowired
-	private AnonymousAuthenticationAccountFactory superFactory;
-
-	@Autowired
-	private CustomerEMConverter converter;
+public class AnonymousAuthenticationCustomerFactory implements EMFactory<Customer, CustomerModel> {
 
 	@Override
-	public Customer produce(CustomerModel model) {
+	public <X extends Customer> X produce(CustomerModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		Customer customer = superFactory.convert(superFactory.produce(model), Customer.class);
-
-		customer.setPrestigePoint(model.getPrestigePoint());
-
-		return customer;
+		try {
+			return clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@Override
-	public CustomerModel produce(Customer entity) {
+	public <X extends CustomerModel> X produce(Customer entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return new CustomerModel();
-	}
-
-	@Override
-	public <X extends Customer> X convert(Customer instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
-	}
-
-	@Override
-	public <X extends CustomerModel> X convert(CustomerModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		return converter.convert(instance, clazz);
+		try {
+			return clazz.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

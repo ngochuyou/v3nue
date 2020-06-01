@@ -8,9 +8,8 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Account;
 import v3nue.application.model.models.AccountModel;
-import v3nue.core.model.factory.AbstractEMConverter;
 import v3nue.core.model.factory.AbstractEntityEMFactory;
-import v3nue.core.model.factory.EMFactoryForInheritedModels;
+import v3nue.core.model.factory.EMFactory;
 import v3nue.core.model.factory.Factory;
 import v3nue.core.utils.AccountRole;
 import v3nue.core.utils.Gender;
@@ -21,18 +20,15 @@ import v3nue.core.utils.Gender;
  */
 @Component
 @Factory(entity = Account.class)
-public class AdminAuthenticationAccountFactory implements EMFactoryForInheritedModels<Account, AccountModel> {
+public class AdminAuthenticationAccountFactory implements EMFactory<Account, AccountModel> {
 
 	@Autowired
 	private AbstractEntityEMFactory abstractFactory;
 
-	@Autowired
-	private AbstractEMConverter converter;
-
 	@Override
-	public Account produce(AccountModel model) {
+	public <X extends Account> X produce(AccountModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		Account account = abstractFactory.convert(abstractFactory.produce(model), Account.class);
+		X account = abstractFactory.produce(model, clazz);
 
 		account.setId(model.getUsername());
 		account.setDob(model.getDob());
@@ -55,9 +51,9 @@ public class AdminAuthenticationAccountFactory implements EMFactoryForInheritedM
 	}
 
 	@Override
-	public AccountModel produce(Account account) {
+	public <X extends AccountModel> X produce(Account account, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		AccountModel model = abstractFactory.convert(abstractFactory.produce(account), AccountModel.class);
+		X model = abstractFactory.produce(account, clazz);
 
 		model.setUsername(account.getId());
 		model.setDob(account.getDob());
@@ -70,42 +66,6 @@ public class AdminAuthenticationAccountFactory implements EMFactoryForInheritedM
 		model.setPhoto(account.getPhoto());
 
 		return model;
-	}
-
-	@Override
-	public <X extends Account> X convert(Account instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		X x = converter.convert(instance, clazz);
-		
-		x.setId(instance.getId());
-		x.setDob(instance.getDob());
-		x.setEmail(instance.getEmail());
-		x.setFullname(instance.getFullname());
-		x.setGender(instance.getGender());
-		x.setRole(instance.getRole());
-		x.setPassword(instance.getPassword());
-		x.setPhone(instance.getPhone());
-		x.setPhoto(instance.getPhoto());
-				
-		return x;
-	}
-
-	@Override
-	public <X extends AccountModel> X convert(AccountModel instance, Class<X> clazz) {
-		// TODO Auto-generated method stub
-		X x = converter.convert(instance, clazz);
-
-		x.setUsername(instance.getUsername());
-		x.setDob(instance.getDob());
-		x.setEmail(instance.getEmail());
-		x.setFullname(instance.getFullname());
-		x.setGender(instance.getGender());
-		x.setRole(instance.getRole());
-		x.setPassword(instance.getPassword());
-		x.setPhone(instance.getPhone());
-		x.setPhoto(instance.getPhoto());
-		
-		return x;
 	}
 
 }

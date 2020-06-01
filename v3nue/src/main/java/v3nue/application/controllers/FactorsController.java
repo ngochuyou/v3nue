@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import v3nue.application.FactorManager;
+import v3nue.application.model.entities.Mandatory;
+import v3nue.application.model.entities.MandatoryType;
+import v3nue.application.model.entities.Supplier;
 import v3nue.application.model.entities.Venue;
 import v3nue.application.model.factory.oauth2.admin.AdminAuthenticationEMFactoryManager;
 import v3nue.application.service.services.AbstractEntityService;
@@ -29,7 +32,6 @@ import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.AbstractFactor;
 import v3nue.core.model.Model;
 import v3nue.core.model.factory.EMFactory;
-import v3nue.core.utils.StringUtil;
 
 /**
  * @author Ngoc Huy
@@ -53,16 +55,9 @@ public class FactorsController extends BaseController {
 
 	@PreAuthorize(HASROLE_ADMIN)
 	@GetMapping("/unique")
-	public ResponseEntity<?> unique(@RequestParam(name = "id", required = false, defaultValue = "") String id,
-			@RequestParam(name = "name", required = false, defaultValue = "") String name,
+	public ResponseEntity<?> unique(@RequestParam(name = "id", required = true) String id,
+			@RequestParam(name = "name", required = true) String name,
 			@RequestParam(name = "type", required = true) String typeName) {
-		boolean validId = !StringUtil.isEmpty(id);
-		boolean validName = !StringUtil.isEmpty(name);
-
-		if (!validId && !validName) {
-			return handle(null, 400, false);
-		}
-
 		super.checkAccountScopes(READ);
 		super.openSession();
 
@@ -78,20 +73,10 @@ public class FactorsController extends BaseController {
 
 		query.select(builder.count(root));
 		// @formatter:off
-		if (validName && validId) {
-			query.where(builder
-					.and(builder.equal(root.get("id"), id),
-							builder.equal(root.get("name"), name)),
-							builder.equal(root.get("isActive"), true));
-		} else {
-			if (validName) {
-				query.where(builder.and(builder.equal(root.get("name"), name),
-							builder.equal(root.get("isActive"), true)));
-			} else {
-				query.where(builder.and(builder.equal(root.get("id"), id),
-							builder.equal(root.get("isActive"), true)));
-			}
-		}
+		query.where(builder
+				.and(builder.notEqual(root.get("id"), id),
+						builder.equal(root.get("name"), name),
+						builder.equal(root.get("isActive"), true)));
 		// @formatter:on
 		if (dao.count(query) == 0) {
 			return handle(OK, 200, false);
@@ -117,12 +102,12 @@ public class FactorsController extends BaseController {
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
 		CriteriaQuery<? extends AbstractFactor> query = builder.createQuery(clazz);
 		Root<? extends AbstractFactor> root = query.from(clazz);
-
+		
 		query.where(builder.equal(root.get("isActive"), true));
 		// @formatter:off
 		return handle(dao.find(query, calculateFirstIndex(page, amountPerPage), amountPerPage)
 				.stream()
-				.map(factor -> factory.produce(factor))
+				.map(factor -> factory.produce(factor, modelManager.forModelClass(clazz)))
 				.collect(Collectors.toList()), 200, false);
 		// @formatter:on
 	}
@@ -146,8 +131,7 @@ public class FactorsController extends BaseController {
 		query.select(builder.count(root))
 			.where(builder.equal(root.get("isActive"), true));
 		// @formatter:on
-		return handle(new PaginatingSet(calculatePages(dao.count(query), amountPerPage * 1.0), amountPerPage), 200,
-				false);
+		return handle(new PaginatingSet(dao.count(query), amountPerPage), 200, false);
 	}
 
 	@PostMapping("/venue")
@@ -157,7 +141,7 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Venue.class);
-		Venue newVenue = (Venue) factory.produce((Model) model);
+		Venue newVenue = (Venue) factory.produce((Model) model, Venue.class);
 
 		newVenue = abstractEntityService.doMandatory(newVenue);
 		DatabaseOperationResult<Venue> result = dao.insert(newVenue, Venue.class);
@@ -171,14 +155,121 @@ public class FactorsController extends BaseController {
 
 	@PutMapping("/venue")
 	@PreAuthorize(HASROLE_ADMIN)
-	public ResponseEntity<?> updateVenue(@RequestBody(required = true) Venue model)
-			throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+	public ResponseEntity<?> updateVenue(@RequestBody(required = true) Venue model) {
 		super.checkAccountScopes(WRITE);
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Venue.class);
-		Venue newVenue = (Venue) factory.produce((Model) model);
+		Venue newVenue = (Venue) factory.produce((Model) model, Venue.class);
 		DatabaseOperationResult<Venue> result = dao.update(newVenue, Venue.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PostMapping("/supplier")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createSupplier(@RequestBody(required = true) Supplier model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Supplier.class);
+		Supplier newSupplier = (Supplier) factory.produce((Model) model, Supplier.class);
+
+		newSupplier = abstractEntityService.doMandatory(newSupplier);
+		DatabaseOperationResult<Supplier> result = dao.insert(newSupplier, Supplier.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PutMapping("/supplier")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateSupplier(@RequestBody(required = true) Supplier model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Supplier.class);
+		Supplier newSupplier = (Supplier) factory.produce((Model) model, Supplier.class);
+		DatabaseOperationResult<Supplier> result = dao.update(newSupplier, Supplier.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PostMapping("/mandatory_type")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createMandatoryType(@RequestBody(required = true) MandatoryType model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(MandatoryType.class);
+		MandatoryType newMandatoryType = (MandatoryType) factory.produce((Model) model, MandatoryType.class);
+
+		newMandatoryType = abstractEntityService.doMandatory(newMandatoryType);
+		DatabaseOperationResult<MandatoryType> result = dao.insert(newMandatoryType, MandatoryType.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PutMapping("/mandatory_type")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateMandatoryType(@RequestBody(required = true) MandatoryType model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(MandatoryType.class);
+		MandatoryType newMandatoryType = (MandatoryType) factory.produce((Model) model, MandatoryType.class);
+		DatabaseOperationResult<MandatoryType> result = dao.update(newMandatoryType, MandatoryType.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PostMapping("/mandatory")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createMandatory(@RequestBody(required = true) Mandatory model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Mandatory.class);
+		Mandatory newMandatory = (Mandatory) factory.produce((Model) model, Mandatory.class);
+
+		newMandatory = abstractEntityService.doMandatory(newMandatory);
+		DatabaseOperationResult<Mandatory> result = dao.insert(newMandatory, Mandatory.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(result.getEntity());
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PutMapping("/mandatory")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateMandatory(@RequestBody(required = true) Mandatory model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Mandatory.class);
+		Mandatory newMandatory = (Mandatory) factory.produce((Model) model, Mandatory.class);
+		DatabaseOperationResult<Mandatory> result = dao.update(newMandatory, Mandatory.class);
 
 		if (result.isOkay()) {
 			return handleSuccess(result.getEntity());

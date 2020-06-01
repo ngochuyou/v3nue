@@ -15,7 +15,7 @@ class Paginator extends React.Component {
 		let paginatingSet = new PaginatingSet(this.props.paginatingSet);
 		let array = [];
 		
-		for (let i = 1; i <= paginatingSet.total; i++) {
+		for (let i = 1; i <= paginatingSet.pages; i++) {
 			array[i - 1] = i;
 		}
 

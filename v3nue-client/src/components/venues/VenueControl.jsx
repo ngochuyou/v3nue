@@ -7,12 +7,12 @@ import VenueTable from './VenueTable.jsx';
 import VenueModel from '../../models/VenueModel.js';
 // actions
 import {
-	updateModel, updateList,
-	postVenue, editVenue
+	updateModel, updateList, createVenue, editVenue
 } from '../../actions/VenueActions.js';
+// initState
+import { initState } from '../../reducers/VenueReducer.js';
 import {
-	fetchFactorList, removeFactor,
-	getPaginatingInfo
+	fetchFactorList, removeFactor, getPaginatingInfo
 } from '../../actions/FactorActions.js';
 // ui
 import Paginator from '../ui/Paginator.jsx';
@@ -81,13 +81,18 @@ class VenueControl extends React.Component {
 				...props.list, model
 			]));
 			this.creationFormCloseBtn.click();
-
-			let result = await postVenue(model);
+			result = await createVenue(model);
+			
 			let list = [...props.list];
 
 			if (result.isOkay()) {
 				list[list.length] = result.model;
 				model = new VenueModel();
+				this.setState({
+					paginatingInfo: new PaginatingSet({
+						total: list.length + 1
+					})
+				});
 			} else {
 				list.splice(list.length, 1);
 			}
@@ -96,7 +101,6 @@ class VenueControl extends React.Component {
 		}
 
 		props.dispatch(updateModel(model));
-		this.fetchPaginatingInfo();
 	}
 
 	async editVenue() {
@@ -145,9 +149,15 @@ class VenueControl extends React.Component {
 
 		if (!result.isOkay()) {
 			props.dispatch(updateList(props.list));
+
+			return;
 		}
 
-		this.fetchPaginatingInfo();
+		this.setState({
+			paginatingInfo: new PaginatingSet({
+				total: props.list.length - 1
+			})
+		});
 	}
 
 	async onPageSelect(page) {
@@ -162,11 +172,20 @@ class VenueControl extends React.Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.props.dispatch(updateList(initState.list));
+		this.props.dispatch(updateModel(initState.model));
+		document.getElementById(formId).remove();
+	}
+
 	render() {
 		const { props } = this;
 
 		return (
 			<div className="uk-position-relative uk-padding-small uk-padding-remove-horizontal">
+				<h1 className="uk-heading uk-heading-line uk-text-muted">
+					<span>Venues</span>
+				</h1>
 				<div className="uk-text-right">
 					<button
 						className="uk-button uk-button-primary uk-margin-small-right"
@@ -179,7 +198,7 @@ class VenueControl extends React.Component {
 					<VenueTable
 						onRowSelect={ this.onListElementSelect.bind(this) }
 						onRemove={ this.onRemove.bind(this) }
-						formId={ formId } 
+						formId={ formId }
 						list={ props.list }
 					/>
 					<Paginator

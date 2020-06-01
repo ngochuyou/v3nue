@@ -5,8 +5,8 @@ import v3nue.core.model.Model;
 
 public interface EMFactory<T extends AbstractEntity, M extends Model> {
 
-	public abstract T produce(M model);
+	<X extends T> X produce(M model, Class<X> clazz);
 
-	public abstract M produce(T entity);
+	<X extends M> X produce(T entity, Class<X> clazz);
 
 }
