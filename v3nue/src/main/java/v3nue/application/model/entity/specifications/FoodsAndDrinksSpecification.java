@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.FoodsAndDrinks;
 import v3nue.application.model.entities.FoodsAndDrinksType;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
+import v3nue.core.service.ServiceResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -28,7 +28,7 @@ import v3nue.core.utils.StringUtil;
 public class FoodsAndDrinksSpecification extends CompositeSpecificationWithDAO<FoodsAndDrinks> {
 
 	@Override
-	public DatabaseOperationResult<FoodsAndDrinks> isSatisfiedBy(FoodsAndDrinks entity) {
+	public ServiceResult<FoodsAndDrinks> isSatisfiedBy(FoodsAndDrinks entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -53,7 +53,7 @@ public class FoodsAndDrinksSpecification extends CompositeSpecificationWithDAO<F
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<FoodsAndDrinksType> root = query.from(FoodsAndDrinksType.class);
 
-			query.where(builder.equal(root.get("id"), type.getId()));
+			query.select(builder.count(root)).where(builder.equal(root.get("id"), type.getId()));
 
 			if (dao.count(query) == 0) {
 				messages.put("type", "Annonymous Foods-and-Drinks type.");
@@ -61,7 +61,7 @@ public class FoodsAndDrinksSpecification extends CompositeSpecificationWithDAO<F
 			}
 		}
 
-		return new DatabaseOperationResult<FoodsAndDrinks>(entity, messages, status);
+		return new ServiceResult<FoodsAndDrinks>(entity, messages, status);
 	}
 
 }

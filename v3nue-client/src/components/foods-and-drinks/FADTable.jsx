@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 
-const confirmDialogId = "venue-confirmDialog";
-const confirmDialogCloseBtnId = "venue-confirmDialogCloseBtn";
+const confirmDialogId = "fad-confirmDialog";
+const confirmDialogCloseBtnId = "fad-confirmDialogCloseBtn";
 
 // low-level component
-class VenueTable extends React.Component {
+class FADTable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -35,9 +35,9 @@ class VenueTable extends React.Component {
 			if (onRemove && typeof onRemove === 'function') {
 				onRemove(this.state.target);
 			}
-		}
 
-		this.confirmDialogCloseBtn.click();
+			this.confirmDialogCloseBtn.click();
+		}
 	}
 
 	render() {
@@ -54,8 +54,9 @@ class VenueTable extends React.Component {
 						<tr>
 							<th className="uk-width-small">ID</th>
 							<th>Name</th>
-							<th>Location</th>
 							<th>Price</th>
+							<th>Type</th>
+							<th>Created date</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -64,12 +65,13 @@ class VenueTable extends React.Component {
 						list.map((ele, index) => {
 							return (
 								<tr
-									key={index}
+									key={index}	
 								>
 									<td className="uk-text-truncate">{ele.id}</td>
 									<td>{ele.name}</td>
-									<td>{ele.location}</td>
 									<td>{ele.price}</td>
+									<td>{ele.type.name}</td>
+									<td>{ new Date(ele.createdDate).toLocaleString() }</td>
 									<td>
 										<u
 											className="uk-text-primary pointer uk-margin-right"
@@ -124,4 +126,4 @@ class VenueTable extends React.Component {
 	}
 }
 
-export default VenueTable;
+export default FADTable;

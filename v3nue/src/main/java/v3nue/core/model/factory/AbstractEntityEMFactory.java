@@ -19,13 +19,12 @@ public class AbstractEntityEMFactory implements EMFactory<AbstractEntity, Abstra
 	private AbstractEMConverter converter = new AbstractEMConverter();
 
 	@Override
-	public <X extends AbstractEntity> X produce(AbstractModel model, Class<X> clazz) {
+	public <X extends AbstractEntity> X produceEntity(AbstractModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
 		AbstractEntity entity = new AbstractEntity() {
 			@Override
 			public Object getId() {
 				// TODO Auto-generated method stub
-				
 				return model.getId();
 			}
 		};
@@ -38,13 +37,12 @@ public class AbstractEntityEMFactory implements EMFactory<AbstractEntity, Abstra
 	}
 
 	@Override
-	public <X extends AbstractModel> X produce(AbstractEntity entity, Class<X> clazz) {
+	public <X extends AbstractModel> X produceModel(AbstractEntity entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
 		AbstractModel model = new AbstractModel() {
 			@Override
 			public Object getId() {
 				// TODO Auto-generated method stub
-
 				return entity.getId();
 			}
 		};

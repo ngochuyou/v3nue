@@ -23,15 +23,15 @@ public class AdminAuthenticationAdminFactory implements EMFactory<Admin, AdminMo
 	private AdminAuthenticationAccountFactory accountFactory;
 
 	@Override
-	public <X extends Admin> X produce(AdminModel model, Class<X> clazz) {
+	public <X extends Admin> X produceEntity(AdminModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.produce(model, clazz);
+		return accountFactory.produceEntity(model, clazz);
 	}
 
 	@Override
-	public <X extends AdminModel> X produce(Admin entity, Class<X> clazz) {
+	public <X extends AdminModel> X produceModel(Admin entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.produce(entity, clazz);
+		return accountFactory.produceModel(entity, clazz);
 	}
 
 }

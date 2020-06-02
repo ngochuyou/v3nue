@@ -9,9 +9,9 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Account;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecification;
+import v3nue.core.service.ServiceResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -23,7 +23,7 @@ import v3nue.core.utils.StringUtil;
 public class AccountSpecification extends CompositeSpecification<Account> {
 
 	@Override
-	public DatabaseOperationResult<Account> isSatisfiedBy(Account entity) {
+	public ServiceResult<Account> isSatisfiedBy(Account entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		String id = entity.getId();
@@ -73,7 +73,7 @@ public class AccountSpecification extends CompositeSpecification<Account> {
 			status = BAD;
 		}
 		
-		return new DatabaseOperationResult<Account>(entity, messages, status);
+		return new ServiceResult<Account>(entity, messages, status);
 	}
 
 }

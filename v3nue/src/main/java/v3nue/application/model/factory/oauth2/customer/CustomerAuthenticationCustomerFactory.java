@@ -24,15 +24,15 @@ public class CustomerAuthenticationCustomerFactory implements EMFactory<Customer
 	private AdminAuthenticationCustomerFactory customerFactory;
 
 	@Override
-	public <X extends Customer> X produce(CustomerModel model, Class<X> clazz) {
+	public <X extends Customer> X produceEntity(CustomerModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return customerFactory.produce(model, clazz);
+		return customerFactory.produceEntity(model, clazz);
 	}
 
 	@Override
-	public <X extends CustomerModel> X produce(Customer entity, Class<X> clazz) {
+	public <X extends CustomerModel> X produceModel(Customer entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return customerFactory.produce(entity, clazz);
+		return customerFactory.produceModel(entity, clazz);
 	}
 
 }

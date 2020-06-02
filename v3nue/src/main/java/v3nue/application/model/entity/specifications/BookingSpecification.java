@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 import v3nue.application.model.entities.Booking;
 import v3nue.application.model.entities.EventType;
 import v3nue.application.model.entities.Venue;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
+import v3nue.core.service.ServiceResult;
 
 /**
  * @author Ngoc Huy
@@ -29,7 +29,7 @@ import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
 public class BookingSpecification extends CompositeSpecificationWithDAO<Booking> {
 
 	@Override
-	public DatabaseOperationResult<Booking> isSatisfiedBy(Booking entity) {
+	public ServiceResult<Booking> isSatisfiedBy(Booking entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -69,7 +69,7 @@ public class BookingSpecification extends CompositeSpecificationWithDAO<Booking>
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<Booking> root = query.from(Booking.class);
 			// @formatter:off
-			query.where(builder
+			query.select(builder.count(root)).where(builder
 					.and(builder.equal(root.get("startTime"), startTime),
 							builder.equal(root.get("endTime"), endTime),
 							builder.equal(root.get("venue").get("id"), venue.getId()),
@@ -85,7 +85,7 @@ public class BookingSpecification extends CompositeSpecificationWithDAO<Booking>
 			}
 		}
 
-		return new DatabaseOperationResult<Booking>(entity, messages, status);
+		return new ServiceResult<Booking>(entity, messages, status);
 	}
 
 }

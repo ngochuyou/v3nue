@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect, Route, withRouter } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 // components
 import SupplierControl from '../suppliers/SupplierControl.jsx';
 import MandatoryTypeControl from './MandatoryTypeControl.jsx';
@@ -17,6 +17,12 @@ class MandatoriesControl extends React.Component {
 
 	navigate(path) {
 		this.props.history.push(`/dashboard/mandatories/${path}`);
+	}
+
+	async componentWillUnmount() {
+		this.props.dispatch(updateList(typeMap.supplier.typeName, []));
+		this.props.dispatch(updateList(typeMap.mandatorytype.typeName, []));
+		this.props.dispatch(updateList(typeMap.mandatory.typeName, []));
 	}
 
 	render() {
@@ -52,10 +58,6 @@ class MandatoriesControl extends React.Component {
 					</li>
 				</ul>
 				<div>
-					<Redirect
-						from="/dashboard/mandatories/"
-						to="/dashboard/mandatories/suppliers"
-					/>
 					<Route
 						path="/dashboard/mandatories/suppliers"
 						render={routerProps => <SupplierControl />}

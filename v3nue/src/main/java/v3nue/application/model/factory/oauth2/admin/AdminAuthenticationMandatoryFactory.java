@@ -25,9 +25,9 @@ public class AdminAuthenticationMandatoryFactory implements EMFactory<Mandatory,
 	private AbstractFactorEMFactory factorFactory;
 
 	@Override
-	public <X extends Mandatory> X produce(MandatoryModel model, Class<X> clazz) {
+	public <X extends Mandatory> X produceEntity(MandatoryModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X factor = factorFactory.produce(model, clazz);
+		X factor = factorFactory.produceEntity(model, clazz);
 
 		factor.setPrice(model.getPrice());
 		factor.setSuppliers(CollectionUtils.toSet(model.getSuppliers()));
@@ -37,9 +37,9 @@ public class AdminAuthenticationMandatoryFactory implements EMFactory<Mandatory,
 	}
 
 	@Override
-	public <X extends MandatoryModel> X produce(Mandatory factor, Class<X> clazz) {
+	public <X extends MandatoryModel> X produceModel(Mandatory factor, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X model = factorFactory.produce(factor, clazz);
+		X model = factorFactory.produceModel(factor, clazz);
 
 		model.setPrice(factor.getPrice());
 		model.setSuppliers(CollectionUtils.toList(factor.getSuppliers()));

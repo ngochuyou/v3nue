@@ -24,29 +24,15 @@ class Paginator extends React.Component {
 				className="uk-pagination uk-flex-right uk-padding"
 				uk-margin=""
 			>
-				<li>
-					<span
-						uk-pagination-previous=""
-						onClick={ this.onPageSelect.bind(this, 0) }
+			{
+				array.map(ele => (
+					<li
+						key={ele}
 						className="pointer"
-					></span>
-				</li>
-				{
-					array.map(ele => (
-						<li
-							key={ele}
-							className="pointer"
-							onClick={ this.onPageSelect.bind(this, ele - 1) }
-						><span>{ele}</span></li>
-					))
-				}
-				<li>
-					<span
-						uk-pagination-next=""
-						onClick={ this.onPageSelect.bind(this, array.length - 1) }
-						className="pointer"
-					></span>
-				</li>
+						onClick={ this.onPageSelect.bind(this, ele - 1) }
+					><span>{ele}</span></li>
+				))
+			}
 			</ul>
 		)
 	}

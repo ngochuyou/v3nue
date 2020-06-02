@@ -24,15 +24,15 @@ public class CustomerAuthenticationPersonnelFactory implements EMFactory<Personn
 	private AnonymousAuthenticationPersonnelFactory anonymousAuthenticationPersonnelFactory;
 
 	@Override
-	public <X extends Personnel> X produce(PersonnelModel model, Class<X> clazz) {
+	public <X extends Personnel> X produceEntity(PersonnelModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return anonymousAuthenticationPersonnelFactory.produce(model, clazz);
+		return anonymousAuthenticationPersonnelFactory.produceEntity(model, clazz);
 	}
 
 	@Override
-	public <X extends PersonnelModel> X produce(Personnel entity, Class<X> clazz) {
+	public <X extends PersonnelModel> X produceModel(Personnel entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return anonymousAuthenticationPersonnelFactory.produce(entity, clazz);
+		return anonymousAuthenticationPersonnelFactory.produceModel(entity, clazz);
 	}
 
 }

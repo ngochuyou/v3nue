@@ -26,9 +26,9 @@ public class AdminAuthenticationAccountFactory implements EMFactory<Account, Acc
 	private AbstractEntityEMFactory abstractFactory;
 
 	@Override
-	public <X extends Account> X produce(AccountModel model, Class<X> clazz) {
+	public <X extends Account> X produceEntity(AccountModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X account = abstractFactory.produce(model, clazz);
+		X account = abstractFactory.produceEntity(model, clazz);
 
 		account.setId(model.getUsername());
 		account.setDob(model.getDob());
@@ -51,9 +51,9 @@ public class AdminAuthenticationAccountFactory implements EMFactory<Account, Acc
 	}
 
 	@Override
-	public <X extends AccountModel> X produce(Account account, Class<X> clazz) {
+	public <X extends AccountModel> X produceModel(Account account, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X model = abstractFactory.produce(account, clazz);
+		X model = abstractFactory.produceModel(account, clazz);
 
 		model.setUsername(account.getId());
 		model.setDob(account.getDob());

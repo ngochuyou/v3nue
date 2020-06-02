@@ -50,6 +50,13 @@ class MandatoryControl extends React.Component {
 		}
 	}
 
+	onCreationButtonClick() {
+		this.props.dispatch(updateModel(type, new MandatoryModel()));
+		this.setState({
+			action: CREATE
+		});
+	}
+
 	onModelUpdate(model) {
 		this.props.dispatch(updateModel(type, model));
 	}
@@ -152,6 +159,18 @@ class MandatoryControl extends React.Component {
 		document.getElementById(formId).remove();
 	}
 
+	async onPageSelect(page) {
+		if (this.state.paginatingInfo.currentPage !== page) {
+			this.props.dispatch(updateList(type, await fetchFactorList(typeMap[type].endPointName, page)));
+			this.setState({
+				paginatingInfo: {
+					...this.state.paginatingInfo,
+					currentPage: page
+				}
+			});
+		}
+	}
+	
 	render() {
 		const { props } = this;
 
@@ -165,7 +184,7 @@ class MandatoryControl extends React.Component {
 						className="uk-button uk-button-primary uk-margin-small-right"
 						uk-toggle={`target: #${formId}`}
 						type="button"
-						onClick={ null }>Add
+						onClick={ this.onCreationButtonClick.bind(this) }>Add
 					</button>
 				</div>
 				<div
@@ -193,6 +212,10 @@ class MandatoryControl extends React.Component {
 						formId={ formId }
 						onRowSelect={ this.onListElementSelect.bind(this) }
 						onRemove={ this.onRemove.bind(this) }
+					/>
+					<Paginator
+						paginatingSet={ this.state.paginatingInfo }
+						onPageSelect={ this.onPageSelect.bind(this) }
 					/>
 				</div>
 			</div>

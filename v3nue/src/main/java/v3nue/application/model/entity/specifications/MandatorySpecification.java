@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Mandatory;
 import v3nue.application.model.entities.MandatoryType;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
+import v3nue.core.service.ServiceResult;
 
 /**
  * @author Ngoc Huy
@@ -27,7 +27,7 @@ import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
 public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandatory> {
 
 	@Override
-	public DatabaseOperationResult<Mandatory> isSatisfiedBy(Mandatory entity) {
+	public ServiceResult<Mandatory> isSatisfiedBy(Mandatory entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -47,8 +47,7 @@ public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandat
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<MandatoryType> root = query.from(MandatoryType.class);
 
-			query.select(builder.count(root));
-			query.where(builder.equal(root.get("id"), type.getId()));
+			query.select(builder.count(root)).where(builder.equal(root.get("id"), type.getId()));
 
 			if (dao.count(query) == 0) {
 				messages.put("type", "Annonymous Manadatory type.");
@@ -61,7 +60,7 @@ public class MandatorySpecification extends CompositeSpecificationWithDAO<Mandat
 			status = BAD;
 		}
 
-		return new DatabaseOperationResult<Mandatory>(entity, messages, status);
+		return new ServiceResult<Mandatory>(entity, messages, status);
 	}
 
 }

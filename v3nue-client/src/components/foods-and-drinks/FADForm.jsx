@@ -4,21 +4,25 @@ import { getCookie } from '../../utils/CookieUtils.js';
 // config
 import { server, oauth2 } from '../../config/default.json';
 
+const allowedFileTypes = ["image/png", "image/jpeg", "image/gif"];
+
 // low-level component
-class MandatoryForm extends React.Component {
+class FADForm extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			submitable: false
+			submitable: false,
+			msg: "",
+			dataURL: ""
 		}
 	}
 
 	async onNameInputBlur(e) {
-		if (e.target.value.length === 0 || !this.props.model) {
+		if (e.target.value.length === 0 || !this.props.model || !this.props.type) {
 			return;
 		}
 
-		let status = await fetch(`${server.url}/api/factor/unique?type=mandatory&name=${e.target.value}&id=${this.props.model.id}`, {
+		let status = await fetch(`${server.url}/api/factor/unique?type=${this.props.type}&name=${e.target.value}&id=${this.props.model.id}`, {
 			method: 'GET',
 			mode: 'cors',
 			headers: {
@@ -63,40 +67,58 @@ class MandatoryForm extends React.Component {
 		if (updateFunction && typeof updateFunction === 'function') {
 			updateFunction({
 				...props.model,
-				type: props.typeList.find(ele => ele.id === e.target.value)
+				type: props.fADTypes.find(ele => ele.id === e.target.value)
 			});
 		}
 	}
 
-	onSuppliersSelectChange(e) {
-		const { props } = this;
-		const updateFunction = props.onModelUpdate;
+	readBlobs(blob) {
+        if (!blob) return;
 
-		if (updateFunction && typeof updateFunction === 'function') {
-			const target = props.suppliers.find(ele => ele.id === e.target.value);
+        if (allowedFileTypes.indexOf(blob.type) === -1) {
+            this.setState({
+                msg: "Invalid image type",
+                submitable: false,
+                dataURL: null
+            });
 
-			if (target && !props.model.suppliers.find(ele => ele.id === target.id)) {
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = blob => {
+            this.setState({
+                dataURL: reader.result
+            });
+        };
+
+        if (blob) {
+            reader.readAsDataURL(blob);
+
+            const { props } = this;
+			const updateFunction = props.onModelUpdate;
+
+			if (updateFunction && typeof updateFunction === 'function') {
 				updateFunction({
 					...props.model,
-					suppliers: [
-						...props.model.suppliers,
-						target
-					]
+					photo: null,
+					photoHolder: blob
 				});
-			}	
-		}
-	}
+			}
+        }
 
-	onRemoveSupplier(id) {
-		const { props } = this;
-		const updateFunction = props.onModelUpdate;
+        this.setState({
+            msg: null,
+            submitable: true
+        });
+    }
 
-		if (updateFunction && typeof updateFunction === 'function') {
-			updateFunction({
-				...props.model,
-				suppliers: props.model.suppliers.filter(ele => ele.id !== id)
-			});	
-		}
+	onPhotoChange(e) {
+		e.preventDefault();
+		e.stopPropagation();
+        this.readBlobs(e.target.files[0]);
+        e.target.files = null;
 	}
 
 	onSubmit(e) {
@@ -111,9 +133,9 @@ class MandatoryForm extends React.Component {
 	}
 
 	render() {
-		const { model, typeList, suppliers } = this.props;
+		const { model, type, fADTypes } = this.props;
 
-		if (!model || !Array.isArray(typeList) || !Array.isArray(suppliers)) {
+		if (!model || !type || !Array.isArray(fADTypes)) {
 			return null;
 		}
 
@@ -121,11 +143,11 @@ class MandatoryForm extends React.Component {
 			<Fragment>
 				<form className="uk-form-stacked">
 					<fieldset className="uk-fieldset">
-						<legend className="uk-legend">Mandatory</legend>
+						<legend className="uk-legend">Foods And Drinks Type</legend>
 						<div className="uk-margin">
 							<label
 								className="uk-form-label"
-								forhtml="mandatory-form-id">
+								forhtml="fad-form-id">
 								ID
 							</label>
 							<div className="uk-form-controls">
@@ -133,7 +155,7 @@ class MandatoryForm extends React.Component {
 									disabled="disabled"
 									name="id"
 									className="uk-input"
-									id="mandatory-form-id"
+									id="fad-form-id"
 									type="text"
 									placeholder="Auto generated"
 									value={ model.id }
@@ -146,7 +168,7 @@ class MandatoryForm extends React.Component {
 						<div className="uk-margin">
 							<label
 								className="uk-form-label"
-								forhtml="mandatory-form-name">
+								forhtml="fad-form-name">
 								Name
 							</label>
 							<div className="uk-form-controls">
@@ -155,9 +177,9 @@ class MandatoryForm extends React.Component {
 									onBlur={ this.onNameInputBlur.bind(this) }
 									name="name"
 									className="uk-input"
-									id="mandatory-form-name"
+									id="fad-form-name"
 									type="text"
-									placeholder="Mandatory name"
+									placeholder="Food And Drinks name"
 									value={ model.name }
 								/>
 								<p className="uk-text-danger uk-margin-small-top">
@@ -168,7 +190,7 @@ class MandatoryForm extends React.Component {
 						<div className="uk-margin">
 							<label
 								className="uk-form-label"
-								forhtml="mandatory-form-price">
+								forhtml="fad-form-price">
 								Price
 							</label>
 							<div className="uk-form-controls">
@@ -176,9 +198,9 @@ class MandatoryForm extends React.Component {
 									onChange={ this.onModelUpdate.bind(this) }
 									name="price"
 									className="uk-input"
-									id="mandatory-form-price"
+									id="fad-form-price"
 									type="number"
-									placeholder="Mandatory price"
+									placeholder="Food And Drinks price"
 									value={ model.price }
 								/>
 								<p className="uk-text-danger uk-margin-small-top">
@@ -189,19 +211,20 @@ class MandatoryForm extends React.Component {
 						<div className="uk-margin">
 							<label
 								className="uk-form-label"
-								forhtml="mandatory-form-type">
+								forhtml="fad-form-type">
 								Type
 							</label>
 							<div className="uk-form-controls">
 								<select
 									className="uk-select"
-									id="mandatory-form-type"
+									id="fad-form-type"
 									name="type"
 									value={ model.type ? model.type.id : "" }
 									onChange={ this.onTypeSelectChange.bind(this) }
 								>
+									<option value="">Please select...</option>
 								{
-									typeList.map((ele, index) => (
+									fADTypes.map((ele, index) => (
 										<option
 											key={ele.id}
 											value={ ele.id }
@@ -217,49 +240,49 @@ class MandatoryForm extends React.Component {
 						<div className="uk-margin">
 							<label
 								className="uk-form-label"
-								forhtml="mandatory-form-suppliers">
-								Suppliers
+								forhtml="fad-form-photo">
+								Photo
 							</label>
-							<div className="uk-form-controls">
-								<select
-									className="uk-select"
-									id="mandatory-form-suppliers"
-									name="suppliers"
-									onChange={ this.onSuppliersSelectChange.bind(this) }
+							<div className="uk-form-controls">	
+								<div
+									className="uk-width-1-1"
+									uk-form-custom="target: true"
 								>
-								{
-									suppliers.map((ele, index) => (
-										<option
-											key={ele.id}
-											value={ ele.id }
-										>{ele.name}</option>
-									))
-								}
-					            </select>
-				            	<ul className="uk-list uk-list-bullet">
-			            		{
-			            			model.suppliers.map((ele, index) => (
-			            				<li
-			            					key={ele.id}
-			            					className="uk-grid-collapse uk-child-width-1-3@m" uk-grid=""
-		            					>
-			            					<div>{ele.name}</div>	
-			            					<div>
-			            						<u
-			            							className="uk-text-danger pointer"
-			            							onClick={ this.onRemoveSupplier.bind(this, ele.id) }
-			            						>
-			            							Remove
-			            						</u>	
-			            					</div>
-			            				</li>
-		            				))
-			            		}	
-			            		</ul>
+									<input
+										type="file"
+										name="photo"
+										id="fad-form-photo"
+										onChange={ this.onPhotoChange.bind(this) }
+									/>
+									<input
+										className="uk-input uk-form-width-1-1"
+										type="text"
+										placeholder="Select file"
+										disabled=""
+									/>
+								</div>
 								<p className="uk-text-danger uk-margin-small-top">
-									{ model.messages.suppliers }
+									{ model.messages.photo }
 								</p>
 							</div>
+							{
+								model.photo ?
+								<img
+									alt="preview"
+									src={`${server.url}/api/file/image/${model.photo}`}
+									className="preview"
+								/> : 
+									!this.state.dataURL ? null : (
+										<img
+											alt="preview"
+											src={ this.state.dataURL }
+											className="preview "
+										/>
+									)
+							}
+							<p className="uk-text-danger uk-margin-small-top">
+								{ this.state.msg }
+							</p>
 						</div>
 						{
 							this.state.submitable ? (
@@ -282,4 +305,4 @@ class MandatoryForm extends React.Component {
 	}
 }
 
-export default MandatoryForm;
+export default FADForm;

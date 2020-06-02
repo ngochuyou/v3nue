@@ -1,10 +1,11 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 // components
 import Sidebar from '../components/ui/Sidebar.jsx';
 import VenueControl from '../components/venues/VenueControl.jsx';
 import MandatoriesControl from '../components/mandatories/MandatoriesControl.jsx';
+import FoodsAndDrinksControl from '../components/foods-and-drinks/FoodsAndDrinksControl.jsx';
 
 class DashBoard extends React.Component {
 
@@ -17,10 +18,6 @@ class DashBoard extends React.Component {
 					<Sidebar />
 				</div>
 				<div className="uk-width-expand max-height-viewport">
-					<Redirect
-						path="/dashboard"
-						to="/dashboard/venues"
-					/>
 					<Route
 						path="/dashboard/venues"
 						render={(props) => <VenueControl { ...props } />}
@@ -28,6 +25,10 @@ class DashBoard extends React.Component {
 					<Route
 						path="/dashboard/mandatories"
 						render={(props) => <MandatoriesControl { ...props } />}
+					/>
+					<Route
+						path="/dashboard/foodsanddrinks"
+						render={(props) => <FoodsAndDrinksControl { ...props } />}
 					/>
 				</div>
 			</div>

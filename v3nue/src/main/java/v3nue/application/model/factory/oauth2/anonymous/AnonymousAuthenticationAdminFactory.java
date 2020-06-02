@@ -21,7 +21,7 @@ import v3nue.core.model.factory.Factory;
 public class AnonymousAuthenticationAdminFactory implements EMFactory<Admin, AdminModel> {
 
 	@Override
-	public <X extends Admin> X produce(AdminModel model, Class<X> clazz) {
+	public <X extends Admin> X produceEntity(AdminModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
 		try {
 			return clazz.getConstructor().newInstance();
@@ -34,7 +34,7 @@ public class AnonymousAuthenticationAdminFactory implements EMFactory<Admin, Adm
 	}
 
 	@Override
-	public <X extends AdminModel> X produce(Admin entity, Class<X> clazz) {
+	public <X extends AdminModel> X produceModel(Admin entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
 		try {
 			return clazz.getConstructor().newInstance();

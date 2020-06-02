@@ -26,9 +26,9 @@ public class AnonymousAuthenticationAccountFactory implements EMFactory<Account,
 	private AbstractEntityEMFactory abstractEntityEMFactory;
 
 	@Override
-	public <X extends Account> X produce(AccountModel model, Class<X> clazz) {
+	public <X extends Account> X produceEntity(AccountModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X account = abstractEntityEMFactory.produce(model, clazz);
+		X account = abstractEntityEMFactory.produceEntity(model, clazz);
 
 		account.setId(model.getUsername());
 		account.setActive(model.isActive());
@@ -54,9 +54,9 @@ public class AnonymousAuthenticationAccountFactory implements EMFactory<Account,
 	}
 
 	@Override
-	public <X extends AccountModel> X produce(Account account, Class<X> clazz) {
+	public <X extends AccountModel> X produceModel(Account account, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return abstractEntityEMFactory.produce(account, clazz);
+		return abstractEntityEMFactory.produceModel(account, clazz);
 	}
 
 }

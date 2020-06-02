@@ -23,9 +23,9 @@ public class AdminAuthenticationCustomerFactory implements EMFactory<Customer, C
 	private AdminAuthenticationAccountFactory accountFactory;
 
 	@Override
-	public <X extends Customer> X produce(CustomerModel model, Class<X> clazz) {
+	public <X extends Customer> X produceEntity(CustomerModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X customer = accountFactory.produce(model, clazz);
+		X customer = accountFactory.produceEntity(model, clazz);
 
 		customer.setPrestigePoint(model.getPrestigePoint());
 
@@ -33,9 +33,9 @@ public class AdminAuthenticationCustomerFactory implements EMFactory<Customer, C
 	}
 
 	@Override
-	public <X extends CustomerModel> X produce(Customer customer, Class<X> clazz) {
+	public <X extends CustomerModel> X produceModel(Customer customer, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X model = accountFactory.produce(customer, clazz);
+		X model = accountFactory.produceModel(customer, clazz);
 
 		model.setPrestigePoint(customer.getPrestigePoint());
 

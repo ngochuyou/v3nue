@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 
-const confirmDialogId = "venue-confirmDialog";
-const confirmDialogCloseBtnId = "venue-confirmDialogCloseBtn";
+const confirmDialogId = "fadt-confirm-dialog";
+const confirmDialogCloseBtnId = "fadt-confirm-dialog-btn";
 
 // low-level component
-class VenueTable extends React.Component {
+class FADTypeTable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -46,7 +46,7 @@ class VenueTable extends React.Component {
 		if (!list || !Array.isArray(list)) {
 			return null;
 		}
-
+		
 		return (
 			<Fragment>
 				<table className="uk-table uk-table-justify uk-table-striped">
@@ -54,8 +54,8 @@ class VenueTable extends React.Component {
 						<tr>
 							<th className="uk-width-small">ID</th>
 							<th>Name</th>
-							<th>Location</th>
-							<th>Price</th>
+							<th>Created by</th>
+							<th>Created date</th>
 							<th></th>
 						</tr>
 					</thead>
@@ -65,11 +65,12 @@ class VenueTable extends React.Component {
 							return (
 								<tr
 									key={index}
+										
 								>
 									<td className="uk-text-truncate">{ele.id}</td>
 									<td>{ele.name}</td>
-									<td>{ele.location}</td>
-									<td>{ele.price}</td>
+									<td>{ele.createdBy}</td>
+									<td>{ new Date(ele.createdDate).toLocaleString() }</td>
 									<td>
 										<u
 											className="uk-text-primary pointer uk-margin-right"
@@ -124,4 +125,4 @@ class VenueTable extends React.Component {
 	}
 }
 
-export default VenueTable;
+export default FADTypeTable;

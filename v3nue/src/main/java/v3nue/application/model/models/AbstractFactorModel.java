@@ -13,11 +13,11 @@ import v3nue.core.model.annotations.Relation;
 @Relation(relation = AbstractFactor.class)
 public class AbstractFactorModel extends AbstractModel {
 
-	private String id;
+	protected String id;
 
-	private String createdBy;
+	protected String createdBy;
 
-	private String name;
+	protected String name;
 
 	public String getId() {
 		return id;

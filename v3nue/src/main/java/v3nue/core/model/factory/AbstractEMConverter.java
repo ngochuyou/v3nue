@@ -42,7 +42,6 @@ public class AbstractEMConverter implements EMConvertMethod<AbstractEntity, Abst
 		try {
 			X x = clazz.getConstructor().newInstance();
 
-			x.setId(instance.getId());
 			x.setActive(instance.isActive());
 			x.setCreatedDate(instance.getCreatedDate());
 			x.setUpdatedDate(instance.getUpdatedDate());

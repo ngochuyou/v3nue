@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,19 +20,28 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import v3nue.application.FactorManager;
+import v3nue.application.model.entities.FoodsAndDrinks;
+import v3nue.application.model.entities.FoodsAndDrinksType;
 import v3nue.application.model.entities.Mandatory;
 import v3nue.application.model.entities.MandatoryType;
 import v3nue.application.model.entities.Supplier;
 import v3nue.application.model.entities.Venue;
 import v3nue.application.model.factory.oauth2.admin.AdminAuthenticationEMFactoryManager;
+import v3nue.application.model.models.MandatoryModel;
 import v3nue.application.service.services.AbstractEntityService;
-import v3nue.core.dao.DatabaseOperationResult;
+import v3nue.application.service.services.FileService;
 import v3nue.core.model.AbstractFactor;
-import v3nue.core.model.Model;
 import v3nue.core.model.factory.EMFactory;
+import v3nue.core.service.ServiceResult;
 
 /**
  * @author Ngoc Huy
@@ -52,6 +62,9 @@ public class FactorsController extends BaseController {
 
 	@Autowired
 	private AdminAuthenticationEMFactoryManager adminAuthenticationEMFactoryManager;
+
+	@Autowired
+	private ObjectMapper mapper;
 
 	@PreAuthorize(HASROLE_ADMIN)
 	@GetMapping("/unique")
@@ -102,12 +115,12 @@ public class FactorsController extends BaseController {
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
 		CriteriaQuery<? extends AbstractFactor> query = builder.createQuery(clazz);
 		Root<? extends AbstractFactor> root = query.from(clazz);
-		
+
 		query.where(builder.equal(root.get("isActive"), true));
 		// @formatter:off
 		return handle(dao.find(query, calculateFirstIndex(page, amountPerPage), amountPerPage)
 				.stream()
-				.map(factor -> factory.produce(factor, modelManager.forModelClass(clazz)))
+				.map(factor -> factory.produceModel(factor, modelManager.forModelClass(clazz)))
 				.collect(Collectors.toList()), 200, false);
 		// @formatter:on
 	}
@@ -141,13 +154,13 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Venue.class);
-		Venue newVenue = (Venue) factory.produce((Model) model, Venue.class);
+		Venue newVenue = (Venue) factory.produceEntity(model, Venue.class);
 
 		newVenue = abstractEntityService.doMandatory(newVenue);
-		DatabaseOperationResult<Venue> result = dao.insert(newVenue, Venue.class);
+		ServiceResult<Venue> result = dao.insert(newVenue, Venue.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), Venue.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -160,11 +173,11 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Venue.class);
-		Venue newVenue = (Venue) factory.produce((Model) model, Venue.class);
-		DatabaseOperationResult<Venue> result = dao.update(newVenue, Venue.class);
+		Venue newVenue = (Venue) factory.produceEntity(model, Venue.class);
+		ServiceResult<Venue> result = dao.update(newVenue, Venue.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), Venue.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -177,13 +190,14 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Supplier.class);
-		Supplier newSupplier = (Supplier) factory.produce((Model) model, Supplier.class);
+		Supplier newSupplier = (Supplier) factory.produceEntity(model, Supplier.class);
 
 		newSupplier = abstractEntityService.doMandatory(newSupplier);
-		DatabaseOperationResult<Supplier> result = dao.insert(newSupplier, Supplier.class);
+
+		ServiceResult<Supplier> result = dao.insert(newSupplier, Supplier.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), Supplier.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -196,11 +210,11 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Supplier.class);
-		Supplier newSupplier = (Supplier) factory.produce((Model) model, Supplier.class);
-		DatabaseOperationResult<Supplier> result = dao.update(newSupplier, Supplier.class);
+		Supplier newSupplier = (Supplier) factory.produceEntity(model, Supplier.class);
+		ServiceResult<Supplier> result = dao.update(newSupplier, Supplier.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), Supplier.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -213,13 +227,13 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(MandatoryType.class);
-		MandatoryType newMandatoryType = (MandatoryType) factory.produce((Model) model, MandatoryType.class);
+		MandatoryType newMandatoryType = (MandatoryType) factory.produceEntity(model, MandatoryType.class);
 
 		newMandatoryType = abstractEntityService.doMandatory(newMandatoryType);
-		DatabaseOperationResult<MandatoryType> result = dao.insert(newMandatoryType, MandatoryType.class);
+		ServiceResult<MandatoryType> result = dao.insert(newMandatoryType, MandatoryType.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), MandatoryType.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -232,11 +246,11 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(MandatoryType.class);
-		MandatoryType newMandatoryType = (MandatoryType) factory.produce((Model) model, MandatoryType.class);
-		DatabaseOperationResult<MandatoryType> result = dao.update(newMandatoryType, MandatoryType.class);
+		MandatoryType newMandatoryType = (MandatoryType) factory.produceEntity(model, MandatoryType.class);
+		ServiceResult<MandatoryType> result = dao.update(newMandatoryType, MandatoryType.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), MandatoryType.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
@@ -244,38 +258,142 @@ public class FactorsController extends BaseController {
 
 	@PostMapping("/mandatory")
 	@PreAuthorize(HASROLE_ADMIN)
-	public ResponseEntity<?> createMandatory(@RequestBody(required = true) Mandatory model) {
+	public ResponseEntity<?> createMandatory(@RequestBody(required = true) MandatoryModel model) {
 		super.checkAccountScopes(WRITE);
 		super.openSession();
 
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Mandatory.class);
-		Mandatory newMandatory = (Mandatory) factory.produce((Model) model, Mandatory.class);
+		Mandatory newMandatory = (Mandatory) factory.produceEntity(model, Mandatory.class);
 
 		newMandatory = abstractEntityService.doMandatory(newMandatory);
-		DatabaseOperationResult<Mandatory> result = dao.insert(newMandatory, Mandatory.class);
+
+		ServiceResult<Mandatory> result = dao.insert(newMandatory, Mandatory.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), MandatoryModel.class));
+		}
+
+		return handle(result.getMessages(), result.getStatus(), false);
+	}
+
+	@PutMapping("/mandatory")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateMandatory(@RequestBody(required = true) MandatoryModel model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Mandatory.class);
+		Mandatory newMandatory = (Mandatory) factory.produceEntity(model, Mandatory.class);
+		ServiceResult<Mandatory> result = dao.update(newMandatory, Mandatory.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), MandatoryModel.class));
+		}
+
+		return handle(result.getMessages(), result.getStatus(), false);
+	}
+
+	@PostMapping("/foods_and_drinks_type")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createFoodsAndDrinksType(@RequestBody(required = true) FoodsAndDrinksType model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(FoodsAndDrinksType.class);
+		FoodsAndDrinksType newFoodsAndDrinksType = (FoodsAndDrinksType) factory.produceEntity(model,
+				FoodsAndDrinksType.class);
+
+		newFoodsAndDrinksType = abstractEntityService.doMandatory(newFoodsAndDrinksType);
+
+		ServiceResult<FoodsAndDrinksType> result = dao.insert(newFoodsAndDrinksType, FoodsAndDrinksType.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinksType.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
 
-	@PutMapping("/mandatory")
+	@PutMapping("/foods_and_drinks_type")
 	@PreAuthorize(HASROLE_ADMIN)
-	public ResponseEntity<?> updateMandatory(@RequestBody(required = true) Mandatory model) {
+	public ResponseEntity<?> updateFoodsAndDrinksType(@RequestBody(required = true) FoodsAndDrinksType model) {
 		super.checkAccountScopes(WRITE);
 		super.openSession();
 
-		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Mandatory.class);
-		Mandatory newMandatory = (Mandatory) factory.produce((Model) model, Mandatory.class);
-		DatabaseOperationResult<Mandatory> result = dao.update(newMandatory, Mandatory.class);
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(FoodsAndDrinksType.class);
+		FoodsAndDrinksType newFoodsAndDrinksType = (FoodsAndDrinksType) factory.produceEntity(model,
+				FoodsAndDrinksType.class);
+		ServiceResult<FoodsAndDrinksType> result = dao.update(newFoodsAndDrinksType, FoodsAndDrinksType.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(result.getEntity());
+			return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinksType.class));
 		}
 
 		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PostMapping(value = "/foods_and_drinks", consumes = { MediaType.APPLICATION_OCTET_STREAM_VALUE,
+			MediaType.MULTIPART_FORM_DATA_VALUE,
+			MediaType.MULTIPART_MIXED_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createFoodsAndDrinks(@RequestPart(name = "model", required = true) String modelJSON,
+			@RequestPart(name = "photo", required = true) MultipartFile photo)
+			throws JsonMappingException, JsonProcessingException {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		FoodsAndDrinks model = mapper.readValue(modelJSON, FoodsAndDrinks.class);
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(FoodsAndDrinks.class);
+		FoodsAndDrinks newFoodsAndDrinks = (FoodsAndDrinks) factory.produceEntity(model, FoodsAndDrinks.class);
+
+		newFoodsAndDrinks = abstractEntityService.doMandatory(newFoodsAndDrinks);
+
+		ServiceResult<String> uploadResult = FileService.uploadFile(photo);
+
+		if (uploadResult.isOkay()) {
+			newFoodsAndDrinks.setPhoto(uploadResult.getEntity());
+
+			ServiceResult<FoodsAndDrinks> result = dao.insert(newFoodsAndDrinks, FoodsAndDrinks.class);
+
+			if (result.isOkay()) {
+				return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinks.class));
+			}
+
+			return handle(result.getMessages(), result.getStatus(), false);
+		}
+
+		return handle(uploadResult.getMessages(), uploadResult.getStatus(), false);
+	}
+
+	@PutMapping(value = "/foods_and_drinks", consumes = { MediaType.APPLICATION_OCTET_STREAM_VALUE,
+			MediaType.MULTIPART_FORM_DATA_VALUE,
+			MediaType.MULTIPART_MIXED_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateFoodsAndDrinks(@RequestPart(name = "model", required = true) String modelJSON,
+			@RequestPart(name = "photo", required = false) MultipartFile photo)
+			throws JsonMappingException, JsonProcessingException {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		FoodsAndDrinks model = mapper.readValue(modelJSON, FoodsAndDrinks.class);
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(FoodsAndDrinks.class);
+		FoodsAndDrinks newFoodsAndDrinks = (FoodsAndDrinks) factory.produceEntity(model, FoodsAndDrinks.class);
+
+		ServiceResult<String> uploadResult = FileService.uploadFile(photo);
+
+		if (uploadResult.isOkay()) {
+			newFoodsAndDrinks.setPhoto(uploadResult.getEntity());
+
+			ServiceResult<FoodsAndDrinks> result = dao.update(newFoodsAndDrinks, FoodsAndDrinks.class);
+
+			if (result.isOkay()) {
+				return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinks.class));
+			}
+
+			return handle(result.getMessages(), result.getStatus(), false);
+		}
+
+		return handle(uploadResult.getMessages(), uploadResult.getStatus(), false);
 	}
 
 	@PreAuthorize(HASROLE_ADMIN)
@@ -286,7 +404,7 @@ public class FactorsController extends BaseController {
 		super.openSession();
 
 		Class<? extends AbstractFactor> clazz = factorManager.forName(type);
-		DatabaseOperationResult<? extends AbstractFactor> result = dao.remove(id, clazz);
+		ServiceResult<? extends AbstractFactor> result = dao.remove(id, clazz);
 
 		if (result.isOkay()) {
 			return handle("OK", 200, true);

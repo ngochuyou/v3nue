@@ -105,4 +105,10 @@ public class AccountModel extends AbstractModel {
 		this.dob = dob;
 	}
 
+	@Override
+	public Object getId() {
+		// TODO Auto-generated method stub
+		return this.username;
+	}
+
 }

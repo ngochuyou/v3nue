@@ -21,10 +21,11 @@ public class AbstractFactorEMFactory implements EMFactory<AbstractFactor, Abstra
 	private AbstractEntityEMFactory abstractFactory;
 
 	@Override
-	public <X extends AbstractFactor> X produce(AbstractFactorModel model, Class<X> clazz) {
+	public <X extends AbstractFactor> X produceEntity(AbstractFactorModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X factor = abstractFactory.produce(model, clazz);
+		X factor = abstractFactory.produceEntity(model, clazz);
 
+		factor.setId(model.getId());
 		factor.setName(model.getName());
 		factor.setCreatedBy(model.getCreatedBy());
 
@@ -32,9 +33,9 @@ public class AbstractFactorEMFactory implements EMFactory<AbstractFactor, Abstra
 	}
 
 	@Override
-	public <X extends AbstractFactorModel> X produce(AbstractFactor entity, Class<X> clazz) {
+	public <X extends AbstractFactorModel> X produceModel(AbstractFactor entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X model = abstractFactory.produce(entity, clazz);
+		X model = abstractFactory.produceModel(entity, clazz);
 
 		model.setId(entity.getId());
 		model.setName(entity.getName());

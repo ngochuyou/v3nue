@@ -23,9 +23,9 @@ public class AdminAuthenticationPersonnelFactory implements EMFactory<Personnel,
 	private AdminAuthenticationAccountFactory accountFactory;
 
 	@Override
-	public <X extends Personnel> X produce(PersonnelModel model, Class<X> clazz) {
+	public <X extends Personnel> X produceEntity(PersonnelModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X personnel = accountFactory.produce(model, clazz);
+		X personnel = accountFactory.produceEntity(model, clazz);
 
 		personnel.setSpecialization(model.getSpecialization());
 
@@ -33,9 +33,9 @@ public class AdminAuthenticationPersonnelFactory implements EMFactory<Personnel,
 	}
 
 	@Override
-	public <X extends PersonnelModel> X produce(Personnel entity, Class<X> clazz) {
+	public <X extends PersonnelModel> X produceModel(Personnel entity, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		X model = accountFactory.produce(entity, clazz);
+		X model = accountFactory.produceModel(entity, clazz);
 
 		model.setSpecialization(entity.getSpecialization());
 

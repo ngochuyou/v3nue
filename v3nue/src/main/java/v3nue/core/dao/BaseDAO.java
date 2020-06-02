@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import v3nue.core.SpecificationFactory;
 import v3nue.core.model.AbstractEntity;
 import v3nue.core.model.entity.specification.Specification;
+import v3nue.core.service.ServiceResult;
 import v3nue.core.utils.ClassReflector;
 
 @Repository("baseDAO")
@@ -31,7 +32,7 @@ public class BaseDAO {
 	@Autowired
 	protected SpecificationFactory specificationFactory;
 
-	protected DatabaseOperationResult<?> result;
+	protected ServiceResult<?> result;
 
 	protected final String OK = "OK.";
 
@@ -107,30 +108,30 @@ public class BaseDAO {
 	 * @return the action result with the status code along with the object.
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public <T extends AbstractEntity> DatabaseOperationResult<T> insert(T object, Class<T> clazz) {
+	public <T extends AbstractEntity> ServiceResult<T> insert(T object, Class<T> clazz) {
 		Session ss = factory.getCurrentSession();
 		// check the parameters
 		if (object == null || clazz == null) {
-			return DatabaseOperationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+			return ServiceResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
 		}
 		// check if the entity's Id exsits
 		T instance = this.findById(object.getId(), clazz);
 
 		if (instance != null) {
-			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+			return ServiceResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
 		}
 		// validate entity
 		Specification<T> specification = (Specification<T>) specificationFactory
 				.getSpecification(reflector.getEntityName(clazz));
 
 		if (!(result = specification.isSatisfiedBy(object)).isOkay()) {
-			return DatabaseOperationResult.error(object, result.getMessages(), result.getStatus());
+			return ServiceResult.error(object, result.getMessages(), result.getStatus());
 		}
 
 		ss.evict(object);
 		ss.save(object);
 
-		return DatabaseOperationResult.success(object, result.getMessages());
+		return ServiceResult.success(object, result.getMessages());
 	}
 
 	/**
@@ -140,30 +141,30 @@ public class BaseDAO {
 	 * @return the object if found otherwise null
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends AbstractEntity> DatabaseOperationResult<T> update(T object, Class<T> clazz) {
+	public <T extends AbstractEntity> ServiceResult<T> update(T object, Class<T> clazz) {
 		Session ss = factory.getCurrentSession();
 		// check the parameters
 		if (object == null || clazz == null) {
-			return DatabaseOperationResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+			return ServiceResult.error(object, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
 		}
 		// check if entity exists
 		T instance = this.findById(object.getId(), clazz);
 
 		if (instance == null) {
-			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+			return ServiceResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
 		}
 		// validate entity and save
 		Specification<T> specification = (Specification<T>) specificationFactory
 				.getSpecification(reflector.getEntityName(clazz));
 
 		if (!(result = specification.isSatisfiedBy(object)).isOkay()) {
-			return DatabaseOperationResult.error(object, result.getMessages(), result.getStatus());
+			return ServiceResult.error(object, result.getMessages(), result.getStatus());
 		}
 
 		ss.detach(instance);
 		ss.update(object);
 
-		return DatabaseOperationResult.success(object, result.getMessages());
+		return ServiceResult.success(object, result.getMessages());
 	}
 
 	/**
@@ -172,23 +173,23 @@ public class BaseDAO {
 	 * 
 	 * @return the <code>DatabaseOperationResult</code>
 	 */
-	public <T extends AbstractEntity> DatabaseOperationResult<T> remove(Object id, Class<T> clazz) {
+	public <T extends AbstractEntity> ServiceResult<T> remove(Object id, Class<T> clazz) {
 		Session ss = factory.getCurrentSession();
 		// check the parameters
 		if (id == null || clazz == null) {
-			return DatabaseOperationResult.error(null, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
+			return ServiceResult.error(null, new HashMap<>(Map.of("id", INVALID_RESOURCE)), 400);
 		}
 		// check if entity exists
 		T instance = this.findById(id, clazz);
 
 		if (instance == null) {
-			return DatabaseOperationResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
+			return ServiceResult.error(instance, new HashMap<>(Map.of("id", EXISTED_RESOURCE)), 409);
 		}
 
 		instance.setActive(false);
 		ss.update(instance);
 
-		return DatabaseOperationResult.success(instance, new HashMap<>(Map.of("id", "Document removed")));
+		return ServiceResult.success(instance, new HashMap<>(Map.of("id", "Document removed")));
 	}
 
 }

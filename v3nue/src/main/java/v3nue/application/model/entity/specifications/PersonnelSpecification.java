@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 
 import v3nue.application.model.entities.Personnel;
 import v3nue.application.model.entities.Specialization;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
+import v3nue.core.service.ServiceResult;
 
 /**
  * @author Ngoc Huy
@@ -23,7 +23,7 @@ import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
 public class PersonnelSpecification extends CompositeSpecificationWithDAO<Personnel> {
 
 	@Override
-	public DatabaseOperationResult<Personnel> isSatisfiedBy(Personnel entity) {
+	public ServiceResult<Personnel> isSatisfiedBy(Personnel entity) {
 		// TODO Auto-generated method stub
 		Specialization specialization = entity.getSpecialization();
 		Map<String, String> messages = new HashMap<String, String>();
@@ -32,10 +32,10 @@ public class PersonnelSpecification extends CompositeSpecificationWithDAO<Person
 			messages.put("specialization",
 					"Personnel's specialization can not be null and must be a valid information.");
 
-			return new DatabaseOperationResult<Personnel>(entity, messages, BAD);
+			return new ServiceResult<Personnel>(entity, messages, BAD);
 		}
 
-		return new DatabaseOperationResult<Personnel>(entity, messages, OK);
+		return new ServiceResult<Personnel>(entity, messages, OK);
 	}
 
 }

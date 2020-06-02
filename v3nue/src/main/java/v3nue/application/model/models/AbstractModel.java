@@ -5,6 +5,8 @@ package v3nue.application.model.models;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import v3nue.core.model.AbstractEntity;
 import v3nue.core.model.Model;
 import v3nue.core.model.annotations.Relation;
@@ -14,15 +16,16 @@ import v3nue.core.model.annotations.Relation;
  *
  */
 @Relation(relation = AbstractEntity.class)
-public class AbstractModel implements Model {
+public abstract class AbstractModel implements Model {
 
-	private Object id;
+	protected Date createdDate;
 
-	private Date createdDate;
+	protected Date updatedDate;
 
-	private Date updatedDate;
+	@JsonProperty
+	protected boolean isActive;
 
-	private boolean isActive;
+	public abstract Object getId();
 
 	public Date getCreatedDate() {
 		return createdDate;
@@ -46,14 +49,6 @@ public class AbstractModel implements Model {
 
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-
-	public Object getId() {
-		return id;
-	}
-
-	public void setId(Object id) {
-		this.id = id;
 	}
 
 }

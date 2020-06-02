@@ -24,15 +24,15 @@ public class CustomerAuthenticationAccountFactory implements EMFactory<Account, 
 	private AdminAuthenticationAccountFactory accountFactory;
 
 	@Override
-	public <X extends Account> X produce(AccountModel model, Class<X> clazz) {
+	public <X extends Account> X produceEntity(AccountModel model, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.produce(model, clazz);
+		return accountFactory.produceEntity(model, clazz);
 	}
 
 	@Override
-	public <X extends AccountModel> X produce(Account account, Class<X> clazz) {
+	public <X extends AccountModel> X produceModel(Account account, Class<X> clazz) {
 		// TODO Auto-generated method stub
-		return accountFactory.produce(account, clazz);
+		return accountFactory.produceModel(account, clazz);
 	}
 
 }

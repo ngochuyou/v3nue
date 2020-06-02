@@ -155,7 +155,7 @@ public class ApplicationDatabaseInitializer implements ApplicationManager {
 					.createNativeQuery("SELECT * FROM `oauth_client_details` WHERE `client_id` = 'v3nue-client'");
 			oauth2NativeQuery.setFirstResult(0);
 			oauth2NativeQuery.setMaxResults(1);
-			
+
 			if (oauth2NativeQuery.getResultList().size() == 0) {
 				oauth2NativeQuery = session.createNativeQuery(
 						"INSERT INTO `oauth_client_details` VALUES ('v3nue-client','v3nue-base','$2a$10$.f1LCyrKmEj1c3Mdk9I/xO9Zp.EEqkA3u6ikaSW7SyzVpMx5HKiQa','v3nue-client:full-access','authorization_code,password,refresh_token','http://localhost:3001','ADMIN',3600,0,'{ \"trustedClient\" : \"true\" }','false');");

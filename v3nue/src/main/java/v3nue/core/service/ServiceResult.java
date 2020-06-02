@@ -1,7 +1,7 @@
 /**
  * 
  */
-package v3nue.core.dao;
+package v3nue.core.service;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ import v3nue.core.model.AbstractEntity;
  * @author Ngoc Huy
  *
  */
-public class DatabaseOperationResult<T> {
+public class ServiceResult<T> {
 
 	private T entity;
 
@@ -30,7 +30,7 @@ public class DatabaseOperationResult<T> {
 
 	private int status;
 
-	public DatabaseOperationResult(T entity, Map<String, String> messages, int status) {
+	public ServiceResult(T entity, Map<String, String> messages, int status) {
 		super();
 		this.entity = entity;
 		this.messages = messages;
@@ -66,16 +66,16 @@ public class DatabaseOperationResult<T> {
 		return this.status == 200;
 	}
 
-	public static <T extends AbstractEntity> DatabaseOperationResult<T> success(T entity,
+	public static <T extends AbstractEntity> ServiceResult<T> success(T entity,
 			Map<String, String> messages) {
 
-		return new DatabaseOperationResult<T>(entity, messages, 200);
+		return new ServiceResult<T>(entity, messages, 200);
 	}
 
-	public static <T extends AbstractEntity> DatabaseOperationResult<T> error(T entity,
+	public static <T extends AbstractEntity> ServiceResult<T> error(T entity,
 			Map<String, String> messages, int status) {
 
-		return new DatabaseOperationResult<T>(entity, messages, status);
+		return new ServiceResult<T>(entity, messages, status);
 	}
 
 }

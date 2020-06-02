@@ -15,9 +15,9 @@ import org.springframework.stereotype.Component;
 import v3nue.application.model.entities.Booking;
 import v3nue.application.model.entities.Contract;
 import v3nue.application.model.entities.Personnel;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
+import v3nue.core.service.ServiceResult;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -29,7 +29,7 @@ import v3nue.core.utils.StringUtil;
 public class ContractSpecification extends CompositeSpecificationWithDAO<Contract> {
 
 	@Override
-	public DatabaseOperationResult<Contract> isSatisfiedBy(Contract entity) {
+	public ServiceResult<Contract> isSatisfiedBy(Contract entity) {
 		// TODO Auto-generated method stub
 		Map<String, String> messages = new HashMap<>();
 		int status = OK;
@@ -59,7 +59,7 @@ public class ContractSpecification extends CompositeSpecificationWithDAO<Contrac
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<Personnel> root = query.from(Personnel.class);
 
-			query.where(builder.equal(root.get("id"), supervisor.getId()));
+			query.select(builder.count(root)).where(builder.equal(root.get("id"), supervisor.getId()));
 
 			if (dao.count(query) == 0) {
 				messages.put("supervisor", "Annonymous supervisor.");
@@ -76,20 +76,20 @@ public class ContractSpecification extends CompositeSpecificationWithDAO<Contrac
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
 			Root<Booking> root = query.from(Booking.class);
 
-			query.where(builder.equal(root.get("id"), booking.getId()));
+			query.select(builder.count(root)).where(builder.equal(root.get("id"), booking.getId()));
 
 			if (dao.count(query) == 0) {
 				messages.put("booking", "Annonymous booking.");
 				status = CONFLICT;
 			}
 		}
-		
+
 		if (StringUtil.isEmpty(entity.getDescription())) {
 			messages.put("description", "Description can not be empty.");
 			status = BAD;
 		}
-			
-		return new DatabaseOperationResult<Contract>(entity, messages, status);
+
+		return new ServiceResult<Contract>(entity, messages, status);
 	}
 
 }

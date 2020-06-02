@@ -31,8 +31,8 @@ import v3nue.application.model.factory.oauth2.anonymous.AnonymousAuthenticationC
 import v3nue.application.model.factory.oauth2.customer.CustomerAuthenticationCustomerFactory;
 import v3nue.application.model.models.CustomerModel;
 import v3nue.application.service.services.AccountService;
-import v3nue.core.dao.DatabaseOperationResult;
 import v3nue.core.model.factory.EMFactory;
+import v3nue.core.service.ServiceResult;
 import v3nue.core.utils.AccountRole;
 import v3nue.core.utils.StringUtil;
 
@@ -94,16 +94,16 @@ public class AccountController extends BaseController {
 		super.openSession();
 		model.setRole(AccountRole.Customer.toString());
 
-		Customer newAccount = anonymousCustomerFactory.produce(model, Customer.class);
+		Customer newAccount = anonymousCustomerFactory.produceEntity(model, Customer.class);
 
 		newAccount = accountService.doMandatory(newAccount);
 		newAccount.setAuthorities(Stream.of(ApplicationDatabaseInitializer.READ, ApplicationDatabaseInitializer.WRITE)
 				.collect(Collectors.toSet()));
 
-		DatabaseOperationResult<Account> result = dao.insert(newAccount, Account.class);
+		ServiceResult<Account> result = dao.insert(newAccount, Account.class);
 
 		if (result.isOkay()) {
-			return handleSuccess(customerAuthenticationCustomerFactory.produce(newAccount, CustomerModel.class));
+			return handleSuccess(customerAuthenticationCustomerFactory.produceModel(newAccount, CustomerModel.class));
 		}
 
 		return handle("ERROR from server", result.getStatus(), false);
@@ -124,7 +124,7 @@ public class AccountController extends BaseController {
 		EMFactory factory = oauth2BasedFactoryManagerProvider.getEMFactoryManager(account.getRole())
 				.getEMFactory(accountManager.getAccountClass(account.getRole()));
 
-		return handleSuccess(factory.produce(account, accountManager.getAccountModelClass(account.getRole())));
+		return handleSuccess(factory.produceModel(account, accountManager.getAccountModelClass(account.getRole())));
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -141,7 +141,7 @@ public class AccountController extends BaseController {
 		EMFactory factory = oauth2BasedFactoryManagerProvider.getEMFactoryManager()
 				.getEMFactory(accountManager.getAccountClass(account.getRole()));
 
-		return handleSuccess(factory.produce(account, accountManager.getAccountClass(account.getRole())));
+		return handleSuccess(factory.produceModel(account, accountManager.getAccountClass(account.getRole())));
 	}
 
 }
