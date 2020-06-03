@@ -83,7 +83,7 @@ export async function createFAD(model) {
 
 	let form = new FormData();
 
-	form.append("photo", model.photo || model.photoHolder);
+	form.append("photo", model.photoHolder);
 	form.append("model", JSON.stringify(model));
 
 	return fetch(`${server.url}/api/factor/${typeMap.foodsanddrinks.endPointName}`, {
@@ -110,7 +110,7 @@ export async function editFAD(model) {
 
 	let form = new FormData();
 
-	form.append("photo", model.photo || model.photoHolder);
+	form.append("photo", model.photoHolder);
 	form.append("model", JSON.stringify(model));
 
 	return fetch(`${server.url}/api/factor/${typeMap.foodsanddrinks.endPointName}`, {

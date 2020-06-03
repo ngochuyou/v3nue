@@ -1,31 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
 // components
-import VenueForm from './VenueForm.jsx';
-import VenueTable from './VenueTable.jsx';
+import SpecializationForm from '../specializations/SpecializationForm.jsx';
+import SpecializationTable from '../specializations/SpecializationTable.jsx';
 // models
-import VenueModel from '../../models/VenueModel.js';
+import AbstractFactor from '../../models/AbstractFactor.js';
 // actions
 import {
-	updateModel, updateList, createVenue, editVenue
-} from '../../actions/VenueActions.js';
-// initState
-import { initState } from '../../reducers/VenueReducer.js';
+	updateModel, updateList, createSpecialization,
+	editSpecialization
+} from '../../actions/SpecializationActions.js';
 import {
 	fetchFactorList, removeFactor, getPaginatingInfo
 } from '../../actions/FactorActions.js';
+// initState
+import { initState } from '../../reducers/SpecializationReducer.js';
 // ui
 import Paginator from '../ui/Paginator.jsx';
 // utils
 import PaginatingSet from '../../utils/PaginatingUtils';
 
-const formId = "venue-form";
-const formCloseBtnId = "venue-form-close";
+const formId = "specialization-form";
+const formCloseBtnId = "specialization-form-close";
 const CREATE = "CREATE";
 const EDIT = "EDIT";
-const type = "venue";
+const type = "specialization";
 
-class VenueControl extends React.Component {
+class SpecializationControl extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -35,13 +36,10 @@ class VenueControl extends React.Component {
 	}
 
 	async componentDidMount() {
-		this.props.dispatch(updateModel(new VenueModel()));
+		this.props.dispatch(updateModel(new AbstractFactor()));
 		this.props.dispatch(updateList(await fetchFactorList(type)));
-		this.fetchPaginatingInfo();
-		this.creationFormCloseBtn = document.getElementById(formCloseBtnId);
-	}
+		this.formCloseBtn = document.getElementById(formCloseBtnId);
 
-	async fetchPaginatingInfo() {
 		let result = await getPaginatingInfo(type);
 
 		if (result.isOkay()) {
@@ -55,23 +53,30 @@ class VenueControl extends React.Component {
 		this.props.dispatch(updateModel(model));
 	}
 
+	onCreationButtonClick() {
+		this.props.dispatch(updateModel(new AbstractFactor()));
+		this.setState({
+			action: CREATE
+		});
+	}
+
 	onSubmitModel() {
 		if (this.state.action === CREATE) {
-			this.createVenue();
+			this.createSpecialization();
 
 			return;
 		}
 
-		this.editVenue();
+		this.editSpecialization();
 
 		return;
 	}
 
-	async createVenue() {
+	async createSpecialization() {
 		const { props } = this;
-		let model = new VenueModel({
+		let model = new AbstractFactor({
 			...props.model,
-			createdBy: props.principal.username,
+			createdBy: props.principal,
 			id: "Generating..."
 		});
 		let result = model.validate();
@@ -80,63 +85,44 @@ class VenueControl extends React.Component {
 			props.dispatch(updateList([
 				...props.list, model
 			]));
-			this.creationFormCloseBtn.click();
-			result = await createVenue(model);
-			
-			let list = [...props.list];
+			this.formCloseBtn.click();
+			result = await createSpecialization(model);
+
+			let newList = [ ...props.list ];
 
 			if (result.isOkay()) {
-				list[list.length] = result.model;
-				model = new VenueModel();
-				this.setState({
-					paginatingInfo: new PaginatingSet({
-						total: list.length + 1
-					})
-				});
+				newList[newList.length] = result.model;
+				model = new AbstractFactor();
 			} else {
-				list.splice(list.length, 1);
+				newList.splice(newList.length, 1);
 			}
 
-			props.dispatch(updateList(list));
+			props.dispatch(updateList(newList));
 		}
 
 		props.dispatch(updateModel(model));
 	}
 
-	async editVenue() {
+	async editSpecialization() {
 		const { props } = this;
-		let model = new VenueModel(props.model);
+		let model = new AbstractFactor(props.model);
 		let result = model.validate();
 
 		if (result) {
 			props.dispatch(updateList(props.list
 				.map(ele => ele.id === model.id ? model : ele)));
-			this.creationFormCloseBtn.click();
+			this.formCloseBtn.click();
 			
-			let result = await editVenue(model);
+			let result = await editSpecialization(model);
 
 			if (result.isOkay()) {
-				model = new VenueModel();
+				model = new AbstractFactor();
 			} else {
 				props.dispatch(updateList([...props.list]));
 			}
 		}
 
 		props.dispatch(updateModel(model));
-	}
-
-	onCreateButtonClick() {
-		this.props.dispatch(updateModel(new VenueModel()));
-		this.setState({
-			action: CREATE
-		});
-	}
-
-	onListElementSelect(ele) {
-		this.props.dispatch(updateModel(new VenueModel(ele)));
-		this.setState({
-			action: EDIT
-		});
 	}
 
 	async onRemove(model) {
@@ -160,9 +146,16 @@ class VenueControl extends React.Component {
 		});
 	}
 
+	onListElementSelect(ele) {
+		this.props.dispatch(updateModel(new AbstractFactor(ele)));
+		this.setState({
+			action: EDIT
+		});
+	}
+	
 	async onPageSelect(page) {
 		if (this.state.paginatingInfo.currentPage !== page) {
-			this.props.dispatch(updateList(await fetchFactorList("venue", page)));
+			this.props.dispatch(updateList(await fetchFactorList(type, page)));
 			this.setState({
 				paginatingInfo: {
 					...this.state.paginatingInfo,
@@ -173,38 +166,25 @@ class VenueControl extends React.Component {
 	}
 
 	componentWillUnmount() {
-		this.props.dispatch(updateList(initState.list));
 		this.props.dispatch(updateModel(initState.model));
 		document.getElementById(formId).remove();
 	}
 
 	render() {
 		const { props } = this;
-
+		
 		return (
 			<div className="uk-position-relative uk-padding-small uk-padding-remove-horizontal">
 				<h1 className="uk-heading uk-heading-line uk-text-muted">
-					<span>Venues</span>
+					<span>Specializations</span>
 				</h1>
 				<div className="uk-text-right">
 					<button
 						className="uk-button uk-button-primary uk-margin-small-right"
 						uk-toggle={`target: #${formId}`}
 						type="button"
-						onClick={ this.onCreateButtonClick.bind(this) }>Add
+						onClick={ this.onCreationButtonClick.bind(this) }>Add
 					</button>
-				</div>
-				<div className="uk-padding-small uk-padding-remove-horizontal">
-					<VenueTable
-						onRowSelect={ this.onListElementSelect.bind(this) }
-						onRemove={ this.onRemove.bind(this) }
-						formId={ formId }
-						list={ props.list }
-					/>
-					<Paginator
-						paginatingSet={ this.state.paginatingInfo }
-						onPageSelect={ this.onPageSelect.bind(this) }
-					/>
 				</div>
 				<div
 					id={formId}
@@ -216,24 +196,36 @@ class VenueControl extends React.Component {
 							className="uk-modal-close-outside"
 							type="button" uk-close="">
 						</button>
-						<VenueForm
-							model={ props.model }
-							onModelUpdate={ this.onModelUpdate.bind(this) }
+						<SpecializationForm
 							onSubmitModel={ this.onSubmitModel.bind(this) }
+							onModelUpdate={ this.onModelUpdate.bind(this) }
+							model={ props.model }
 						/>
 					</div>
+				</div>
+				<div className="uk-padding-small uk-padding-remove-horizontal">
+					<SpecializationTable
+						list={ props.list }
+						formId={ formId }
+						onRowSelect={ this.onListElementSelect.bind(this) }
+						onRemove={ this.onRemove.bind(this) }
+					/>
+					<Paginator
+						paginatingSet={ this.state.paginatingInfo }
+						onPageSelect={ this.onPageSelect.bind(this) }
+					/>
 				</div>
 			</div>
 		);
 	}
 }
 
-const mapStateToProps = (store) => {
+const mapStateToProps = store => {
 	return {
-		model: store.venue.model,
-		list: store.venue.list,
-		principal: store.auth.principal
+		model: store.spec.model,
+		list: store.spec.list,
+		principal: store.auth.principal.username
 	}
 }
 
-export default connect(mapStateToProps)(VenueControl);
+export default connect(mapStateToProps)(SpecializationControl);

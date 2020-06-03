@@ -29,7 +29,7 @@ import v3nue.core.utils.Constants;
  * @author Ngoc Huy
  *
  */
-@Order(value = 6)
+@Order(value = 7)
 @Component("oauth2AuthenticationBasedEMFactoryManagerProvider")
 public class OAuth2AuthenticationBasedEMFactoryManagerProvider implements EMFactoryManagerProvider {
 

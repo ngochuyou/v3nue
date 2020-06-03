@@ -3,6 +3,7 @@ import React from 'react';
 import { server, oauth2 } from '../../config/default.json';
 // utils
 import { getCookie } from '../../utils/CookieUtils.js';
+
 // low-level component
 class VenueForm extends React.Component {
 	constructor(props) {

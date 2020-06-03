@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
-import { connect } from 'react-redux';
 // components
 import Sidebar from '../components/ui/Sidebar.jsx';
 import VenueControl from '../components/venues/VenueControl.jsx';
 import MandatoriesControl from '../components/mandatories/MandatoriesControl.jsx';
 import FoodsAndDrinksControl from '../components/foods-and-drinks/FoodsAndDrinksControl.jsx';
+import AccountControl from '../components/accounts/AccountControl.jsx';
+import SpecializationControl from '../components/specializations/SpecializationControl.jsx';
 
 class DashBoard extends React.Component {
 
@@ -30,16 +31,18 @@ class DashBoard extends React.Component {
 						path="/dashboard/foodsanddrinks"
 						render={(props) => <FoodsAndDrinksControl { ...props } />}
 					/>
+					<Route
+						path="/dashboard/accounts"
+						render={(props) => <AccountControl { ...props } />}
+					/>
+					<Route
+						path="/dashboard/specializations"
+						render={(props) => <SpecializationControl { ...props } />}
+					/>
 				</div>
 			</div>
 		)
 	}
 }
 
-const mapStateToProps = (store) => {
-	return {
-		model: ""
-	}
-}
-
-export default connect(mapStateToProps)(DashBoard);
+export default DashBoard;

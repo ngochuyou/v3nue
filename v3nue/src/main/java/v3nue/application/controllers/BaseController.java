@@ -37,7 +37,8 @@ public class BaseController {
 	protected final String FULL_SCOPE = "#oauth2.hasScope('v3nue-client:full-access')";
 	protected final String HASROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 	protected final String HASROLE_CUSTOMER = "hasRole('ROLE_CUSTOMER')";
-	protected final String HASROLE_PERSONNEL = "hasRole('ROLE_PESONNEL')";
+	protected final String HASROLE_MANAGER = "hasRole('ROLE_MANAGER')";
+	protected final String HASROLE_EMPLOYEE = "hasRole('ROLE_EMPLOYEE')";
 
 	protected final String OK = "OK";
 	protected final String ACCESS_DENIED = "ACCESS_DENIED";

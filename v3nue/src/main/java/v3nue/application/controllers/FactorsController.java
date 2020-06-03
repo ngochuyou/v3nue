@@ -33,6 +33,7 @@ import v3nue.application.model.entities.FoodsAndDrinks;
 import v3nue.application.model.entities.FoodsAndDrinksType;
 import v3nue.application.model.entities.Mandatory;
 import v3nue.application.model.entities.MandatoryType;
+import v3nue.application.model.entities.Specialization;
 import v3nue.application.model.entities.Supplier;
 import v3nue.application.model.entities.Venue;
 import v3nue.application.model.factory.oauth2.admin.AdminAuthenticationEMFactoryManager;
@@ -332,6 +333,43 @@ public class FactorsController extends BaseController {
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
 
+	@PostMapping("/specialization")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createSpecialization(@RequestBody(required = true) Specialization model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Specialization.class);
+		Specialization newSpecialization = (Specialization) factory.produceEntity(model, Specialization.class);
+
+		newSpecialization = abstractEntityService.doMandatory(newSpecialization);
+
+		ServiceResult<Specialization> result = dao.insert(newSpecialization, Specialization.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), Specialization.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
+	@PutMapping("/specialization")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateSpecialization(@RequestBody(required = true) Specialization model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Specialization.class);
+		Specialization newSpecialization = (Specialization) factory.produceEntity(model, Specialization.class);
+		ServiceResult<Specialization> result = dao.update(newSpecialization, Specialization.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinksType.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+
 	@PostMapping(value = "/foods_and_drinks", consumes = { MediaType.APPLICATION_OCTET_STREAM_VALUE,
 			MediaType.MULTIPART_FORM_DATA_VALUE,
 			MediaType.MULTIPART_MIXED_VALUE }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -379,21 +417,23 @@ public class FactorsController extends BaseController {
 		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(FoodsAndDrinks.class);
 		FoodsAndDrinks newFoodsAndDrinks = (FoodsAndDrinks) factory.produceEntity(model, FoodsAndDrinks.class);
 
-		ServiceResult<String> uploadResult = FileService.uploadFile(photo);
+		if (photo != null) {
+			ServiceResult<String> uploadResult = FileService.uploadFile(photo);
 
-		if (uploadResult.isOkay()) {
-			newFoodsAndDrinks.setPhoto(uploadResult.getEntity());
-
-			ServiceResult<FoodsAndDrinks> result = dao.update(newFoodsAndDrinks, FoodsAndDrinks.class);
-
-			if (result.isOkay()) {
-				return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinks.class));
+			if (uploadResult.isOkay()) {
+				newFoodsAndDrinks.setPhoto(uploadResult.getEntity());
+			} else {
+				return handle(uploadResult.getMessages(), uploadResult.getStatus(), false);
 			}
-
-			return handle(result.getMessages(), result.getStatus(), false);
 		}
 
-		return handle(uploadResult.getMessages(), uploadResult.getStatus(), false);
+		ServiceResult<FoodsAndDrinks> result = dao.update(newFoodsAndDrinks, FoodsAndDrinks.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), FoodsAndDrinks.class));
+		}
+
+		return handle(result.getMessages(), result.getStatus(), false);
 	}
 
 	@PreAuthorize(HASROLE_ADMIN)

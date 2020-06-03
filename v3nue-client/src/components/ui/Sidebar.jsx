@@ -27,8 +27,11 @@ class Sidebar extends React.Component {
 					<li onClick={ this.navigate.bind(this, "foodsanddrinks")}>
 						Foods And Drinks
 					</li>
-					<li onClick={ this.navigate.bind(this, "employees")}>
-						Employees
+					<li onClick={ this.navigate.bind(this, "specializations")}>
+						Specializations
+					</li>
+					<li onClick={ this.navigate.bind(this, "accounts")}>
+						Accounts
 					</li>
 				</ul>
 			</div>

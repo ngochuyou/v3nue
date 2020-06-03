@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import v3nue.core.model.exceptions.NoFactoryException;
+
 @Transactional(readOnly = true)
 @ControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
@@ -51,6 +53,16 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 		ex.printStackTrace();
 		
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.CONFLICT, request);
+	}
+	
+	@ExceptionHandler(value = NoFactoryException.class)
+	public ResponseEntity<Object> handleNoFactoryFound(RuntimeException ex, WebRequest request) {
+		Session ss = factory.getCurrentSession();
+		
+		ss.clear();
+		ex.printStackTrace();
+		
+		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.UNAUTHORIZED, request);
 	}
 
 	// @formatter:on

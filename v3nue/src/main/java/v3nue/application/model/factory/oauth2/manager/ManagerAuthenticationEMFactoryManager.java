@@ -1,7 +1,7 @@
 /**
  * 
  */
-package v3nue.application.model.factory.oauth2.customer;
+package v3nue.application.model.factory.oauth2.manager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,11 +38,11 @@ import v3nue.core.utils.Constants;
  * @author Ngoc Huy
  *
  */
-@OAuth2RoleBased(role = AccountRole.Customer)
 @Component
-@Order(value = 3)
+@Order(value = 6)
+@OAuth2RoleBased(role = AccountRole.Manager)
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager, ApplicationManager {
+public class ManagerAuthenticationEMFactoryManager implements EMFactoryManager, ApplicationManager {
 
 	private Map<Class<? extends AbstractEntity>, EMFactory<? extends AbstractEntity, ? extends Model>> factoryMap;
 
@@ -51,7 +51,7 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		logger.info("Initializing CustomerAuthenticationEMFactoryManager");
+		logger.info("Initializing ManagerAuthenticationEMFactoryManager");
 		factoryMap = new HashMap<>();
 		contextUtils.getComponentStream(this.getClass().getPackageName(),
 				Stream.of(new AssignableTypeFilter(EMFactory.class), new AnnotationTypeFilter(Factory.class))
@@ -64,7 +64,7 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 
 						factoryMap.put(anno.entity(), (EMFactory) context.getBean(clazz));
 						logger.info(clazz.getName() + " has been assigned for producing Models of type "
-								+ anno.entity().getName() + " for CustomerAuthentication");
+								+ anno.entity().getName() + " for ManagerAuthentication");
 					} catch (ClassNotFoundException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -75,12 +75,12 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 
 			if (factoryMap.get(clazz) == null) {
 				logger.info(defaultEMFactory.getClass().getName() + " has been assigned for producing Models of type "
-						+ clazz.getName() + " for AdminAuthentication");
+						+ clazz.getName() + " for ManagerAuthentication");
 				factoryMap.put(clazz, defaultEMFactory);
 			}
 		});
 		logger.info(AbstractFactorEMFactory.class.getName() + " has been assigned for producing Models of type "
-				+ AbstractFactor.class.getName() + " for CustomerAuthentication");
+				+ AbstractFactor.class.getName() + " for ManagerAuthentication");
 		factoryMap.put(AbstractFactor.class, context.getBean(AbstractFactorEMFactory.class));
 		contextUtils.getComponentStream(Constants.modelPackage,
 				new HashSet<>(Set.of(new AssignableTypeFilter(Model.class))),
@@ -98,7 +98,7 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 						if (factoryMap.get(entityClass) instanceof DefaultEMFactory) {
 							logger.info("Removing " + defaultEMFactory.getClass().getName()
 									+ " for producing Models of type " + entityClass.getName()
-									+ " for CustomerAuthentication");
+									+ " for ManagerAuthentication");
 							factoryMap.put(entityClass, null);
 						}
 					} catch (Exception e) {
@@ -106,7 +106,7 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 						SpringApplication.exit(context);
 					}
 				});
-		logger.info("Finished initializing CustomerAuthenticationEMFactoryManager");
+		logger.info("Finished initializing ManagerAuthenticationEMFactoryManager");
 	}
 
 	@Override
@@ -121,5 +121,4 @@ public class CustomerAuthenticationEMFactoryManager implements EMFactoryManager,
 
 		return factory;
 	}
-
 }
