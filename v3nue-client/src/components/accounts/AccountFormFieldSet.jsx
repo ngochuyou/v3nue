@@ -24,7 +24,7 @@ class AccountFormFieldSet extends React.Component {
 			return;
 		}
 
-		let status = await fetch(`${server.url}/api/account/unique?username=${this.props.model.username}`, {
+		let status = await fetch(`${server.url}/api/account/unique?username=${e.target.value.trim()}`, {
 			method: 'GET',
 			mode: 'cors',
 			headers: {
@@ -37,10 +37,39 @@ class AccountFormFieldSet extends React.Component {
 		if (updateFunction && typeof updateFunction === 'function') {
 			updateFunction({
 				...this.props.model,
-				messages: status !== 200 ? {
+				messages: {
 					...this.props.model.messages,
-					username: "This username is already taken."
-				} : { }
+					username: status !== 200 ? "This username is already taken." : ""
+				}
+			});
+		}
+	}
+
+	async onEmailInputBlur(e) {
+		const updateFunction = this.props.onModelUpdate;
+
+		if (e.target.value.length === 0 || !this.props.model) {
+
+			return;
+		}
+
+		let status = await fetch(`${server.url}/api/account/unique?username=${this.props.model.username}&email=${e.target.value.trim()}`, {
+			method: 'GET',
+			mode: 'cors',
+			headers: {
+				Authorization: `Bearer ${getCookie(oauth2.token.name[0])}`
+			}
+		})
+		.then(res => res.status)
+		.catch(err => 500);
+		
+		if (updateFunction && typeof updateFunction === 'function') {
+			updateFunction({
+				...this.props.model,
+				messages:  {
+					...this.props.model.messages,
+					email: status !== 200 ? "This email is already taken." : ""
+				}
 			});
 		}
 	}
@@ -57,15 +86,11 @@ class AccountFormFieldSet extends React.Component {
 	}
 
 	render() {
-		const { model } = this.props;
+		const { model, roleSet } = this.props;
 
-		if (!model) {
+		if (!model || !Array.isArray(roleSet)) {
 			return null;
 		}
-
-		const date = new Date(model.dob)
-		const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: '2-digit', day: '2-digit' }) 
-		const [{ value: month },,{ value: day },,{ value: year }] = dateTimeFormat.formatToParts(date);
 
 		return (
 			<Fragment>
@@ -76,19 +101,32 @@ class AccountFormFieldSet extends React.Component {
 						Username
 					</label>
 					<div className="uk-form-controls">
-						<input
-							name="username"
-							className="uk-input"
-							id="account-form-username"
-							type="text"
-							placeholder="Username"
-							value={ model.username }
-							onChange={ this.onModelUpdate.bind(this) }
-							onBlur={ this.onUsernameInputBlur.bind(this) }
-						/>
-						<p className="uk-text-danger uk-margin-small-top">
-							{ model.messages.username }
-						</p>
+					{
+						this.props.usernameEditAllowed ? (
+							<Fragment>
+								<input
+									name="username"
+									className="uk-input"
+									id="account-form-username"
+									type="text"
+									placeholder="Username"
+									value={ model.username }
+									onChange={ this.onModelUpdate.bind(this) }
+									onBlur={ this.onUsernameInputBlur.bind(this) }
+								/>
+								<p className="uk-text-danger uk-margin-small-top">
+									{ model.messages.username }
+								</p>
+							</Fragment>
+						) : (
+							<input
+								disabled="disabled"
+								className="uk-input"
+								type="text"
+								value={ model.username }
+							/>
+						)
+					}
 					</div>
 				</div>
 				<div className="uk-margin">
@@ -106,6 +144,7 @@ class AccountFormFieldSet extends React.Component {
 							placeholder="Email"
 							value={ model.email }
 							onChange={ this.onModelUpdate.bind(this) }
+							onBlur={ this.onEmailInputBlur.bind(this) }
 						/>
 						<p className="uk-text-danger uk-margin-small-top">
 							{ model.messages.email }
@@ -212,10 +251,14 @@ class AccountFormFieldSet extends React.Component {
 							onChange={ this.onModelUpdate.bind(this) }
 						>
 							<option value="">Please select...</option>
-							<option value="ADMIN">ADMIN</option>
-							<option value="CUSTOMER">CUSTOMER</option>
-							<option value="MANAGER">MANAGER</option>
-							<option value="EMPLOYEE">EMPLOYEE</option>
+							{
+								roleSet.map(ele => (
+									<option
+										value={ele}
+										key={ele}
+									>{ele}</option>
+								))
+							}
 						</select>
 						<p className="uk-text-danger uk-margin-small-top">
 							{ model.messages.role }
@@ -236,7 +279,7 @@ class AccountFormFieldSet extends React.Component {
 							type="date"
 							placeholder="Birthdate"
 							data-date-format="number"
-							value={`${year}-${month}-${day}`}
+							value={ model.dob }
 							onChange={ this.onModelUpdate.bind(this) }
 						/>
 						<p className="uk-text-danger uk-margin-small-top">

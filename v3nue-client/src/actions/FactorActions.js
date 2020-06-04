@@ -16,7 +16,7 @@ export function fetchFactorList(type, page) {
 			Accept: 'application/json'
 		}
 	})
-	.then(async res => res.ok && res.status === 200 ? await res.json() :[])
+	.then(async res => res.ok && res.status === 200 ? await res.json() : [])
 	.catch(async err => []);
 }
 

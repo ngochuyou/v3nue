@@ -29,10 +29,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import v3nue.application.FactorManager;
+import v3nue.application.model.entities.EventType;
 import v3nue.application.model.entities.FoodsAndDrinks;
 import v3nue.application.model.entities.FoodsAndDrinksType;
 import v3nue.application.model.entities.Mandatory;
 import v3nue.application.model.entities.MandatoryType;
+import v3nue.application.model.entities.Seating;
 import v3nue.application.model.entities.Specialization;
 import v3nue.application.model.entities.Supplier;
 import v3nue.application.model.entities.Venue;
@@ -42,6 +44,7 @@ import v3nue.application.service.services.AbstractEntityService;
 import v3nue.application.service.services.FileService;
 import v3nue.core.model.AbstractFactor;
 import v3nue.core.model.factory.EMFactory;
+import v3nue.core.model.factory.EMFactoryManager;
 import v3nue.core.service.ServiceResult;
 
 /**
@@ -100,7 +103,6 @@ public class FactorsController extends BaseController {
 	}
 
 	@GetMapping
-	@PreAuthorize(HASROLE_ADMIN)
 	public ResponseEntity<?> getList(@RequestParam(name = "type", required = true) String type,
 			@RequestParam(name = "p", required = false, defaultValue = "0") int page) {
 		super.checkAccountScopes(READ);
@@ -112,7 +114,8 @@ public class FactorsController extends BaseController {
 			return handleResourceNotFound();
 		}
 
-		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(clazz);
+		EMFactoryManager factoryManager = oauth2BasedFactoryManagerProvider.getEMFactoryManager();
+		EMFactory factory = factoryManager.getEMFactory(clazz);
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
 		CriteriaQuery<? extends AbstractFactor> query = builder.createQuery(clazz);
 		Root<? extends AbstractFactor> root = query.from(clazz);
@@ -121,13 +124,12 @@ public class FactorsController extends BaseController {
 		// @formatter:off
 		return handle(dao.find(query, calculateFirstIndex(page, amountPerPage), amountPerPage)
 				.stream()
-				.map(factor -> factory.produceModel(factor, modelManager.forModelClass(clazz)))
+				.map(factor -> factory.produceModel(factor, modelManager.getModelClass(clazz)))
 				.collect(Collectors.toList()), 200, false);
 		// @formatter:on
 	}
 
 	@GetMapping("/paginate")
-	@PreAuthorize(HASROLE_ADMIN)
 	public ResponseEntity<?> paginating(@RequestParam(required = true) String type) {
 		super.checkAccountScopes(READ);
 		super.openSession();
@@ -436,6 +438,86 @@ public class FactorsController extends BaseController {
 		return handle(result.getMessages(), result.getStatus(), false);
 	}
 
+	@PostMapping("/seating")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createSeating(@RequestBody(required = true) Seating model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Seating.class);
+		Seating newSeating = (Seating) factory.produceEntity(model, Seating.class);
+
+		newSeating = abstractEntityService.doMandatory(newSeating);
+
+		ServiceResult<Seating> result = dao.insert(newSeating, Seating.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), Seating.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+	
+	@PutMapping("/seating")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateSeating(@RequestBody(required = true) Seating model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(Seating.class);
+		Seating newSeating = (Seating) factory.produceEntity(model, Seating.class);
+
+		newSeating = abstractEntityService.doMandatory(newSeating);
+
+		ServiceResult<Seating> result = dao.update(newSeating, Seating.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), Seating.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+	
+	@PostMapping("/event_type")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> createEventType(@RequestBody(required = true) EventType model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(EventType.class);
+		EventType newEventType = (EventType) factory.produceEntity(model, EventType.class);
+
+		newEventType = abstractEntityService.doMandatory(newEventType);
+
+		ServiceResult<EventType> result = dao.insert(newEventType, EventType.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), EventType.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+	
+	@PutMapping("/event_type")
+	@PreAuthorize(HASROLE_ADMIN)
+	public ResponseEntity<?> updateEventType(@RequestBody(required = true) EventType model) {
+		super.checkAccountScopes(WRITE);
+		super.openSession();
+
+		EMFactory factory = adminAuthenticationEMFactoryManager.getEMFactory(EventType.class);
+		EventType newEventType = (EventType) factory.produceEntity(model, EventType.class);
+
+		newEventType = abstractEntityService.doMandatory(newEventType);
+
+		ServiceResult<EventType> result = dao.update(newEventType, EventType.class);
+
+		if (result.isOkay()) {
+			return handleSuccess(factory.produceModel(result.getEntity(), EventType.class));
+		}
+
+		return handle(result.getEntity(), result.getStatus(), false);
+	}
+	
 	@PreAuthorize(HASROLE_ADMIN)
 	@DeleteMapping
 	public ResponseEntity<?> deactivateFactor(@RequestParam(required = true) String type,

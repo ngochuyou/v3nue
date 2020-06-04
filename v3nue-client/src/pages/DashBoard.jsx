@@ -7,6 +7,8 @@ import MandatoriesControl from '../components/mandatories/MandatoriesControl.jsx
 import FoodsAndDrinksControl from '../components/foods-and-drinks/FoodsAndDrinksControl.jsx';
 import AccountControl from '../components/accounts/AccountControl.jsx';
 import SpecializationControl from '../components/specializations/SpecializationControl.jsx';
+import SeatingControl from '../components/seatings/SeatingControl.jsx';
+import EventTypeControl from '../components/event-types/EventTypeControl.jsx';
 
 class DashBoard extends React.Component {
 
@@ -38,6 +40,14 @@ class DashBoard extends React.Component {
 					<Route
 						path="/dashboard/specializations"
 						render={(props) => <SpecializationControl { ...props } />}
+					/>
+					<Route
+						path="/dashboard/seatings"
+						render={(props) => <SeatingControl { ...props } />}
+					/>
+					<Route
+						path="/dashboard/events"
+						render={(props) => <EventTypeControl { ...props } />}
 					/>
 				</div>
 			</div>

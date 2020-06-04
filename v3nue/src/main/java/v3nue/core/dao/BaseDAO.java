@@ -38,7 +38,7 @@ public class BaseDAO {
 
 	protected final String INVALID_RESOURCE = "Invalid resource.";
 
-	protected final String EXISTED_RESOURCE = "Invalid already exisited.";
+	protected final String EXISTED_RESOURCE = "Resource already exisited.";
 
 	// readOnly transactions: BEGIN
 	@Transactional(readOnly = true)

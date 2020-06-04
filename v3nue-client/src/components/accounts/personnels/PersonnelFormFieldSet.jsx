@@ -27,7 +27,7 @@ class PersonnelFormFieldSet extends React.Component {
 				<div className="uk-margin">
 					<label
 						className="uk-form-label"
-						htmlFor="account-form-spec"
+						htmlFor="personnel-account-form-spec"
 					>Specialization</label>
 					<div className="uk-form-controls">
 						<select

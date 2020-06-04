@@ -3,8 +3,18 @@ import {
 } from '../actions/AccountActions.js';
 
 export const initState = {
-	model: null,
-	list: null
+	personnel: {
+		model: null,
+		list: []
+	}
+}
+
+export const namespaces = {
+	ADMIN: "admin",
+	CUSTOMER: "customer",
+	PERSONNEL: "personnel",
+	MANAGER: "personnel",
+	EMPLOYEE: "personnel"
 }
 
 export default function reducer(state = { ...initState }, action) {
@@ -14,14 +24,20 @@ export default function reducer(state = { ...initState }, action) {
 		case UPDATE_MODEL : {
 			return {
 				...state, 
-				model: payload
+				[payload.namespace]: {
+					...state[payload.namespace],
+					model: payload.model
+				}
 			}
 		}
 
 		case UPDATE_LIST: {
 			return {
-				...state,
-				list: payload
+				...state, 
+				[payload.namespace]: {
+					...state[payload.namespace],
+					list: payload.list
+				}
 			}
 		}
 

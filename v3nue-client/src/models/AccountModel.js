@@ -14,6 +14,7 @@ export default class AccountModel extends AbstractModel {
 		this.role = props.role || "";
 		this.photo = props.photo || "";
 		this.dob = props.dob || Date.now();
+		this.passwordRequired = props.passwordRequired === null || props.passwordRequired === undefined ? true : props.passwordRequired;
 	}
 
 	validate() {
@@ -33,10 +34,13 @@ export default class AccountModel extends AbstractModel {
 			flag = false;
 		}
 
-		if (this.password !== null && this.password.length < 8) {
-			this.messages.password = "Password must contain at least 8 characters.";
-			flag = false;
+		if (this.passwordRequired) {
+			if (this.password !== null && this.password.length < 8) {
+				this.messages.password = "Password must contain at least 8 characters.";
+				flag = false;
+			}
 		}
+
 
 		let numericRegex = /^\d+$/;
 

@@ -43,11 +43,11 @@ public class ApplicationDatabaseInitializer implements ApplicationManager {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	public static final Authority READ = new Authority("1f11d41e-2f09-404f-a0ce-0553f13b895f", "ngochuyou", "READ",
+	public static final Authority READ = new Authority("8bf8e185-caa3-4811-8bd0-2906e28edece", "ngochuyou", "READ",
 			true);
-	public static final Authority WRITE = new Authority("47686f2c-3195-4a19-a1d5-6181e17d2090", "ngochuyou", "WRITE",
+	public static final Authority WRITE = new Authority("408812a8-d5bb-4eeb-8f6f-1d5230bd5d92", "ngochuyou", "WRITE",
 			true);
-	public static final Authority FULL_ACCESS = new Authority("e26e91c0-b09d-44ea-98f0-2b0b2e84fc9c", "ngochuyou",
+	public static final Authority FULL_ACCESS = new Authority("33446ec4-3048-4381-80e0-bb6059a0d7ee", "ngochuyou",
 			"FULL_ACCESS", true);
 
 	@Override

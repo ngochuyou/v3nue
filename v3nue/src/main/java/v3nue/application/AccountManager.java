@@ -77,6 +77,7 @@ public class AccountManager implements ApplicationManager {
 		typeMap.put(AccountRole.Customer, Customer.class);
 		typeMap.put(AccountRole.Employee, Personnel.class);
 		typeMap.put(AccountRole.Manager, Personnel.class);
+		typeMap.put(AccountRole.Personnel, Personnel.class);
 		typeMap.put(AccountRole.Anonymous, null);
 	}
 
@@ -94,7 +95,6 @@ public class AccountManager implements ApplicationManager {
 		// @formatter:on
 		accessMap.put(AccountRole.Employee, cem);
 		accessMap.put(AccountRole.Manager, cem);
-
 	}
 
 	/**
@@ -130,3 +130,4 @@ public class AccountManager implements ApplicationManager {
 	}
 
 }
+

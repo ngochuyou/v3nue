@@ -133,7 +133,7 @@ public class ModelManager implements ApplicationManager {
 		return entityTree;
 	}
 
-	public <T extends Model> Class<T> forModelClass(Class<? extends AbstractEntity> clazz) {
+	public <T extends Model> Class<T> getModelClass(Class<? extends AbstractEntity> clazz) {
 
 		return (Class<T>) relationMap.get(clazz);
 	}
