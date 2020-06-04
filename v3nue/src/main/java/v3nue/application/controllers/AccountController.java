@@ -140,7 +140,7 @@ public class AccountController extends BaseController {
 			return handleResourceNotFound();
 		}
 
-		if (accountManager.isAccessible(authenticationRole, role)) {
+		if (!accountManager.isAccessible(authenticationRole, role)) {
 			return handlePrivateResource();
 		}
 
@@ -261,11 +261,10 @@ public class AccountController extends BaseController {
 
 		newPersonnel.setPassword(oldPersonnel.getPassword());
 		newPersonnel.setAuthorities(oldPersonnel.getAuthorities());
-		
+
 		ServiceResult<Personnel> result = dao.update(newPersonnel, Personnel.class);
 
 		if (result.isOkay()) {
-
 			return handleSuccess(factory.produceModel(result.getEntity(), PersonnelModel.class));
 		}
 
@@ -287,8 +286,7 @@ public class AccountController extends BaseController {
 		ServiceResult<Admin> result = dao.insert(admin, Admin.class);
 
 		if (result.isOkay()) {
-
-			return handleSuccess(result.getEntity());
+			return handleSuccess(adminAuthenticationAdminFactory.produceModel(result.getEntity(), AdminModel.class));
 		}
 
 		return handle(result.getMessages(), result.getStatus(), false);

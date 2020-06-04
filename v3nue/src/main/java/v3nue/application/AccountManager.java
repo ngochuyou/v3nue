@@ -82,17 +82,17 @@ public class AccountManager implements ApplicationManager {
 	}
 
 	public void mapAccessibilities() {
-		// @formatter:off
 		accessMap.put(AccountRole.Admin,
 				Stream
-					.of(AccountRole.Admin, AccountRole.Customer, AccountRole.Employee, AccountRole.Manager)
+					.of(AccountRole.Admin, AccountRole.Customer, AccountRole.Employee, AccountRole.Manager, AccountRole.Personnel)
 					.collect(Collectors.toSet()));
-		accessMap.put(AccountRole.Customer, new HashSet<>());
 		accessMap.put(AccountRole.Anonymous, new HashSet<>());
+		// @formatter:off
 		Set<AccountRole> cem = Stream
-				.of(AccountRole.Customer, AccountRole.Employee, AccountRole.Manager)
+				.of(AccountRole.Customer, AccountRole.Employee, AccountRole.Manager, AccountRole.Personnel)
 				.collect(Collectors.toSet());
 		// @formatter:on
+		accessMap.put(AccountRole.Customer, cem);
 		accessMap.put(AccountRole.Employee, cem);
 		accessMap.put(AccountRole.Manager, cem);
 	}

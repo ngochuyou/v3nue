@@ -1,8 +1,9 @@
 import React from 'react';
 import { Route, withRouter } from 'react-router-dom';
-import { typeMap } from '../../actions/AccountActions.js';
 // components
 import PersonnelControl from './personnels/PersonnelControl.jsx';
+import AdminControl from './admins/AdminControl.jsx';
+import CustomerControl from './customers/CustomerControl.jsx';
 
 class AccountControl extends React.Component {
 	navigate(path) {
@@ -45,6 +46,14 @@ class AccountControl extends React.Component {
 					<Route
 						path={`/dashboard/accounts/personnels`}
 						render={props => <PersonnelControl /> }
+					/>
+					<Route
+						path={`/dashboard/accounts/admins`}
+						render={props => <AdminControl /> }
+					/>
+					<Route
+						path={`/dashboard/accounts/customers`}
+						render={props => <CustomerControl /> }
 					/>
 				</div>
 			</div>

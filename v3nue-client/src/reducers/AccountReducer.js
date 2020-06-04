@@ -6,6 +6,14 @@ export const initState = {
 	personnel: {
 		model: null,
 		list: []
+	},
+	admin: {
+		model: null,
+		list: []
+	},
+	customer: {
+		model: null,
+		list: []
 	}
 }
 
