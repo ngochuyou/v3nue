@@ -116,7 +116,7 @@ public class ManagerAuthenticationEMFactoryManager implements EMFactoryManager, 
 		EMFactory<T, M> factory = (EMFactory<T, M>) this.factoryMap.get(clazz);
 
 		if (factory == null) {
-			throw new NoFactoryException("No Factory found for " + clazz.getName() + " with AdminAuthentication");
+			throw new NoFactoryException("No Factory found for " + clazz.getName() + " with ManagerAuthentication");
 		}
 
 		return factory;

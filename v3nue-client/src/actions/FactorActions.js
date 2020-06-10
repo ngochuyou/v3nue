@@ -8,11 +8,13 @@ export function fetchFactorList(type, page) {
 		return Result.error(null, "Invalid type", "client-400");
 	}
 
+	const token = getCookie(oauth2.token.name[0]);
+
 	return fetch(`${server.url}/api/factor?type=${type}${page ? `&p=${page}` : ''}`, {
 		method: 'GET',
 		mode: 'cors',
 		headers: {
-			Authorization: `Bearer ${getCookie(oauth2.token.name[0])}`,
+			Authorization: !token ? null : `Bearer ${token}`,
 			Accept: 'application/json'
 		}
 	})

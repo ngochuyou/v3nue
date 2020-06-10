@@ -18,8 +18,10 @@ export default class ErrorBoundary extends React.Component {
 
 	render() {
 		if (this.state.hasError) {
-		  // You can render any custom fallback UI
-		  return <h1>Something went wrong.</h1>;
+			// You can render any custom fallback UI
+			return <div className="uk-position-relative" uk-height-viewport="">
+				<h1 className="uk-position-center">Something went wrong.</h1>
+			</div>;
 		}
 
 		return this.props.children; 

@@ -40,7 +40,7 @@ public class Contract extends AbstractFactor {
 	private String description;
 
 	@ManyToOne(optional = false)
-	private Personnel supervisor;
+	private Account supervisor;
 
 	@OneToOne(optional = false)
 	private Booking booking;
@@ -86,11 +86,11 @@ public class Contract extends AbstractFactor {
 		this.description = description;
 	}
 
-	public Personnel getSupervisor() {
+	public Account getSupervisor() {
 		return supervisor;
 	}
 
-	public void setSupervisor(Personnel supervisor) {
+	public void setSupervisor(Account supervisor) {
 		this.supervisor = supervisor;
 	}
 

@@ -19,6 +19,7 @@ import v3nue.application.model.entities.Venue;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
 import v3nue.core.service.ServiceResult;
+import v3nue.core.utils.StringUtil;
 
 /**
  * @author Ngoc Huy
@@ -38,6 +39,13 @@ public class BookingSpecification extends CompositeSpecificationWithDAO<Booking>
 
 		if (venue == null || dao.findById(venue.getId(), Venue.class) == null) {
 			messages.put("venue", "Event venue must not be empty and must be a valid Venue.");
+			status = BAD;
+		}
+
+		String phone = entity.getPhone();
+		
+		if (phone != null && (phone.length() < 0 || phone.length() > 15 || !StringUtil.isDigits(phone))) {
+			messages.put("phone", "Phone number can only contains digits and has maximum 15 characters.");
 			status = BAD;
 		}
 
@@ -70,8 +78,8 @@ public class BookingSpecification extends CompositeSpecificationWithDAO<Booking>
 			Root<Booking> root = query.from(Booking.class);
 			// @formatter:off
 			query.select(builder.count(root)).where(builder
-					.and(builder.equal(root.get("startTime"), startTime),
-							builder.equal(root.get("endTime"), endTime),
+					.and(builder.or(builder.equal(root.get("startTime"), startTime),
+							builder.equal(root.get("endTime"), endTime)),
 							builder.equal(root.get("venue").get("id"), venue.getId()),
 							builder.or(builder.equal(root.get("isActive"), true),
 									builder.greaterThan(root.get("expiryDate"), new Date()))));

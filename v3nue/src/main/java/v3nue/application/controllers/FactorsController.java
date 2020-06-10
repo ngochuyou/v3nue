@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +57,7 @@ import v3nue.core.service.ServiceResult;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class FactorsController extends BaseController {
 
-	private final int amountPerPage = 10;
+	private final int amountPerPage = 20;
 
 	@Autowired
 	private FactorManager factorManager;
@@ -103,9 +104,9 @@ public class FactorsController extends BaseController {
 	}
 
 	@GetMapping
-	public ResponseEntity<?> getList(@RequestParam(name = "type", required = true) String type,
+	public ResponseEntity<?> getList(Authentication authentication,
+			@RequestParam(name = "type", required = true) String type,
 			@RequestParam(name = "p", required = false, defaultValue = "0") int page) {
-		super.checkAccountScopes(READ);
 		super.openSession();
 
 		Class<? extends AbstractFactor> clazz = factorManager.forName(type);
@@ -457,7 +458,7 @@ public class FactorsController extends BaseController {
 
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
-	
+
 	@PutMapping("/seating")
 	@PreAuthorize(HASROLE_ADMIN)
 	public ResponseEntity<?> updateSeating(@RequestBody(required = true) Seating model) {
@@ -477,7 +478,7 @@ public class FactorsController extends BaseController {
 
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
-	
+
 	@PostMapping("/event_type")
 	@PreAuthorize(HASROLE_ADMIN)
 	public ResponseEntity<?> createEventType(@RequestBody(required = true) EventType model) {
@@ -497,7 +498,7 @@ public class FactorsController extends BaseController {
 
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
-	
+
 	@PutMapping("/event_type")
 	@PreAuthorize(HASROLE_ADMIN)
 	public ResponseEntity<?> updateEventType(@RequestBody(required = true) EventType model) {
@@ -517,7 +518,7 @@ public class FactorsController extends BaseController {
 
 		return handle(result.getEntity(), result.getStatus(), false);
 	}
-	
+
 	@PreAuthorize(HASROLE_ADMIN)
 	@DeleteMapping
 	public ResponseEntity<?> deactivateFactor(@RequestParam(required = true) String type,

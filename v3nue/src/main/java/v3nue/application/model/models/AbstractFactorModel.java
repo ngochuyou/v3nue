@@ -3,6 +3,8 @@
  */
 package v3nue.application.model.models;
 
+import javax.validation.constraints.NotBlank;
+
 import v3nue.core.model.AbstractFactor;
 import v3nue.core.model.annotations.Relation;
 
@@ -17,6 +19,7 @@ public class AbstractFactorModel extends AbstractModel {
 
 	protected String createdBy;
 
+	@NotBlank
 	protected String name;
 
 	public String getId() {

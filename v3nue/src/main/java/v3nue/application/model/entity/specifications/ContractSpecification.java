@@ -12,12 +12,13 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Component;
 
+import v3nue.application.model.entities.Account;
 import v3nue.application.model.entities.Booking;
 import v3nue.application.model.entities.Contract;
-import v3nue.application.model.entities.Personnel;
 import v3nue.core.model.annotations.EntitySpecification;
 import v3nue.core.model.entity.specification.CompositeSpecificationWithDAO;
 import v3nue.core.service.ServiceResult;
+import v3nue.core.utils.AccountRole;
 import v3nue.core.utils.StringUtil;
 
 /**
@@ -44,20 +45,21 @@ public class ContractSpecification extends CompositeSpecificationWithDAO<Contrac
 			status = BAD;
 		}
 
-		if (entity.getDepositAmount() < 0 || entity.getDepositAmount() > entity.getTotalAmount()) {
+		if (entity.getDepositAmount() < 0) {
 			messages.put("depositAmount", "Deposit amount can not be negative and can not exceed total amount.");
 			status = BAD;
 		}
 
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
-		Personnel supervisor = entity.getSupervisor();
+		Account supervisor = entity.getSupervisor();
 
-		if (supervisor == null) {
+		if (supervisor == null
+				|| (supervisor.getRole() != AccountRole.Admin && supervisor.getRole() != AccountRole.Manager)) {
 			messages.put("supervisor", "Supervisor can not be empty.");
 			status = BAD;
 		} else {
 			CriteriaQuery<Long> query = builder.createQuery(Long.class);
-			Root<Personnel> root = query.from(Personnel.class);
+			Root<Account> root = query.from(Account.class);
 
 			query.select(builder.count(root)).where(builder.equal(root.get("id"), supervisor.getId()));
 

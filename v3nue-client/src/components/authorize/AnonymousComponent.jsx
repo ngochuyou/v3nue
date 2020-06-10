@@ -5,6 +5,7 @@ class AnonymousComponent extends React.Component {
 
 	render() {
 		if (this.props.principal) {
+			
 			return null;
 		}
 

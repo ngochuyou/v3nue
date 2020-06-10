@@ -6,6 +6,9 @@ import Result from './Result.js';
 export const UPDATE_MODEL = "VENUE_UPDATE_MODEL";
 export const UPDATE_LIST = "VENUE_UPDATE_LIST";
 
+export const type = "venue";
+export const endPointName = "venue";
+
 export function updateModel(model) {
 	return {
 		type: UPDATE_MODEL,

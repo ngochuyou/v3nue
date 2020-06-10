@@ -7,7 +7,7 @@ import RegisterForm from '../components/authorize/RegisterForm.jsx';
 import AccountModel from '../models/AccountModel.js';
 
 import {
-	updateModel, authorize,
+	updateModel, authorize, fetchPrincipal,
 	signup, updatePrincipal
 } from '../actions/AuthActions.js';
 
@@ -38,11 +38,15 @@ class LoginPage extends React.Component {
 			case 200: {
 				setCookie(oauth2.token.name[0], result.model.access_token, oauth2.token.days);
 				setCookie(oauth2.token.name[1], result.model.refresh_token, oauth2.token.days);
-				props.dispatch(updatePrincipal({
-					...model,
-					password: null
-				}));
 				props.history.push("/");
+
+				result = await fetchPrincipal();
+
+				if (result.isOkay()) {
+					props.dispatch(updatePrincipal({
+						...result.model
+					}));
+				}
 
 				return;
 			}

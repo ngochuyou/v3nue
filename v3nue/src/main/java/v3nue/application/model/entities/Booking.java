@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -26,8 +27,13 @@ public class Booking extends AbstractEntity {
 
 	@Id
 	@Size(min = 8, max = 255)
+	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
+
+	private String fullname;
+
+	private String phone;
 
 	@Column(name = "event_date", nullable = false)
 	private Date eventDate;
@@ -50,7 +56,7 @@ public class Booking extends AbstractEntity {
 	private EventType type;
 
 	@ManyToOne(optional = true)
-	private Customer customer;
+	private Account customer;
 
 	public String getId() {
 		return id;
@@ -108,11 +114,11 @@ public class Booking extends AbstractEntity {
 		this.type = type;
 	}
 
-	public Customer getCustomer() {
+	public Account getCustomer() {
 		return customer;
 	}
 
-	public void setCustomer(Customer customer) {
+	public void setCustomer(Account customer) {
 		this.customer = customer;
 	}
 
@@ -122,6 +128,22 @@ public class Booking extends AbstractEntity {
 
 	public void setEventDate(Date eventDate) {
 		this.eventDate = eventDate;
+	}
+
+	public String getFullname() {
+		return fullname;
+	}
+
+	public void setFullname(String fullname) {
+		this.fullname = fullname;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 }

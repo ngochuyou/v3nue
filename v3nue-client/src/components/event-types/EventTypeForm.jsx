@@ -116,7 +116,7 @@ class EventTypeForm extends React.Component {
 									className="uk-input"
 									id="event-type-form-name"
 									type="text"
-									placeholder="Seating name"
+									placeholder="Event type name"
 									value={ model.name }
 								/>
 								<p className="uk-text-danger uk-margin-small-top">

@@ -135,7 +135,6 @@ class SeatingForm extends React.Component {
 							<div className="uk-form-controls">
 								<input
 									onChange={ this.onModelUpdate.bind(this) }
-									onBlur={ this.onNameInputBlur.bind(this) }
 									name="capacity"
 									className="uk-input"
 									id="seating-form-capacity"
@@ -157,7 +156,6 @@ class SeatingForm extends React.Component {
 							<div className="uk-form-controls">
 								<input
 									onChange={ this.onModelUpdate.bind(this) }
-									onBlur={ this.onNameInputBlur.bind(this) }
 									name="size"
 									className="uk-input"
 									id="seating-form-size"

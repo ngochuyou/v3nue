@@ -45,6 +45,31 @@ export function signup(model) {
 	.catch(err => Result.error(null, err, 500));
 }
 
+export async function fetchPrincipal() {
+	
+	return fetch(`${server.url}/api/account`, {
+			method: 'GET',
+			mode: 'cors',
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Bearer ${getCookie(oauth2.token.name[0])}`
+			}
+		})
+		.then(
+	        async res => res && res.ok ? Result.success(await res.json(), "OK") : Result.error(null, await res.text(), res.status)
+	    )
+	    .catch(err => Result.error(null, err, 500));
+}
+
+export function logout() {
+	return function(dispatch) {
+		dispatch({
+			type: UPDATE_PRINCIPAL,
+			principal: null
+		});
+	}
+}
+
 export function authorize(model) {
 	if (!model) {
 		return Result.error(model, {

@@ -8,6 +8,10 @@ a, a:focus, a:hover, a:visited, a:link, a:active {
 	color: inherit;
 }
 
+.box-shadow {
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
 #loginform, #signupform {
 	opacity: 0.3;
 	transition: opacity 0.2s ease-in-out;

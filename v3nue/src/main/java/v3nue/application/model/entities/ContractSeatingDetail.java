@@ -16,6 +16,8 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import v3nue.core.model.AbstractEntity;
 
 /**
@@ -31,10 +33,12 @@ public class ContractSeatingDetail extends AbstractEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("contractId")
+	@JsonIgnore
 	private Contract contract;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("seatingId")
+	@JsonIgnore
 	private Seating seating;
 
 	@Min(0)
@@ -55,6 +59,22 @@ public class ContractSeatingDetail extends AbstractEntity {
 
 	public void setAmount(int amount) {
 		this.amount = amount;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+
+	public Seating getSeating() {
+		return seating;
+	}
+
+	public void setSeating(Seating seating) {
+		this.seating = seating;
 	}
 
 }

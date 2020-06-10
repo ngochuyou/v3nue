@@ -24,7 +24,7 @@ public class Constants {
 	public static final String IMAGE_FILE_PATH = "D:\\v3nue-upload\\images\\";
 
 	public static final String[] publicEndPoints = { "/oauth/**", "/api/account\\POST", "/api/account/unique\\GET",
-			"/api/account/{id:.+}\\GET", "/api/file/image/**\\GET" };
+			"/api/account/{id:.+}\\GET", "/api/file/image/**\\GET", "/api/booking\\POST", "/api/factor\\GET" };
 
 	public static final String resourceId = "v3nue-base";
 

@@ -16,6 +16,8 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import v3nue.core.model.AbstractEntity;
 
 /**
@@ -31,10 +33,12 @@ public class ContractMandatoryDetail extends AbstractEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("contractId")
+	@JsonIgnore
 	private Contract contract;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("mandatoryId")
+	@JsonIgnore
 	private Mandatory mandatory;
 
 	@Min(0)
@@ -67,6 +71,22 @@ public class ContractMandatoryDetail extends AbstractEntity {
 
 	public void setTotal(float total) {
 		this.total = total;
+	}
+
+	public Contract getContract() {
+		return contract;
+	}
+
+	public void setContract(Contract contract) {
+		this.contract = contract;
+	}
+
+	public Mandatory getMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(Mandatory mandatory) {
+		this.mandatory = mandatory;
 	}
 
 }

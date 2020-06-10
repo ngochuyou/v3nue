@@ -13,13 +13,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import v3nue.application.model.factory.EMFactoryManagerProvider;
 import v3nue.application.model.factory.OAuth2RoleBased;
+import v3nue.core.model.exceptions.NoFactoryException;
 import v3nue.core.model.factory.EMFactoryManager;
 import v3nue.core.security.server.authorization.CustomUserDetails;
 import v3nue.core.utils.AccountRole;
@@ -34,8 +35,6 @@ import v3nue.core.utils.Constants;
 public class OAuth2AuthenticationBasedEMFactoryManagerProvider implements EMFactoryManagerProvider {
 
 	private Map<AccountRole, EMFactoryManager> managerMap;
-
-	private SecurityContext securityContext = SecurityContextHolder.getContext();
 
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -70,22 +69,28 @@ public class OAuth2AuthenticationBasedEMFactoryManagerProvider implements EMFact
 	@Override
 	public EMFactoryManager getEMFactoryManager() {
 		// TODO Auto-generated method stub
-		return managerMap.get(getAuthenticationRole());
+		return this.getEMFactoryManager(getAuthenticationRole());
 	}
 
-	public EMFactoryManager getEMFactoryManager(AccountRole role) {
+	public EMFactoryManager getEMFactoryManager(AccountRole role) throws NoFactoryException {
 		// TODO Auto-generated method stub
-		return managerMap.get(role);
+		EMFactoryManager factoryManager = managerMap.get(role);
+
+		if (factoryManager == null) {
+			throw new NoFactoryException("No Factory found");
+		}
+
+		return factoryManager;
 	}
 
 	public AccountRole getAuthenticationRole() {
-		Authentication authentication = securityContext.getAuthentication();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-		if (authentication == null) {
+		if (authentication instanceof AnonymousAuthenticationToken) {
 			return AccountRole.Anonymous;
 		}
 
-		return ((CustomUserDetails) authentication).getRole();
+		return ((CustomUserDetails) authentication.getPrincipal()).getRole();
 	}
 
 }
