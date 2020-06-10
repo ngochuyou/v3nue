@@ -8,6 +8,15 @@ a, a:focus, a:hover, a:visited, a:link, a:active {
 	color: inherit;
 }
 
+.glow .glow-hov {
+	color: lightgray;
+	transition: color 0.2s ease-in-out;
+}
+
+.glow:hover .glow-hov {
+	color: black;
+}
+
 .box-shadow {
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }

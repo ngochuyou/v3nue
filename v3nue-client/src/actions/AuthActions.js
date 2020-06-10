@@ -2,7 +2,7 @@ import { oauth2, server } from '../config/default.json';
 
 import Result from './Result.js';
 
-import { getCookie } from '../utils/CookieUtils.js';
+import { removeCookie, getCookie } from '../utils/CookieUtils.js';
 
 export const UPDATE_MODEL = "AUTH_UPDATE_MODEL";
 export const UPDATE_PRINCIPAL = "AUTH_UPDATE_PRINCIPAL";
@@ -150,10 +150,14 @@ export function checkSession() {
 
 			return;
 		})
-		.catch(async err => await dispatch({
-			type: UPDATE_PRINCIPAL,
-			payload: null
-		}))
+		.catch(async err => {
+			removeCookie(oauth2.token.name[0]);
+			removeCookie(oauth2.token.name[0]);
+			await dispatch({
+				type: UPDATE_PRINCIPAL,
+				payload: null
+			});
+		})
 	}
 }
 

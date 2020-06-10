@@ -5,13 +5,13 @@ import { logout } from '../actions/AuthActions.js';
 // configs
 import { oauth2 } from '../config/default.json';
 // utils
-import { setCookie } from '../utils/CookieUtils.js';
+import { removeCookie } from '../utils/CookieUtils.js';
 
 class HomePage extends React.Component {
 
 	logout() {
-		setCookie(oauth2.token.name[0], null, null);
-		setCookie(oauth2.token.name[1], null, null);
+		removeCookie(oauth2.token.name[0]);
+		removeCookie(oauth2.token.name[1]);
 		this.props.dispatch(logout());
 	}
 
@@ -62,21 +62,120 @@ class HomePage extends React.Component {
 												>
 													Dashboard
 												</button>
-												<button
-													className="uk-button uk-button-primary uk-margin-small-right"
-													onClick={ this.logout.bind(this) }
-												>
-													Logout
-												</button>
+												
 											</Fragment>
 										) : null
 									}
+									<button
+										className="uk-button uk-button-primary uk-margin-small-right"
+										onClick={ this.logout.bind(this) }
+									>
+										Logout
+									</button>
 								</Fragment>
 							)
 						}
 					</div>
 				</div>
-				
+				<div className="uk-padding">
+					<div
+						className="uk-position-relative uk-visible-toggle uk-light"
+						tabIndex="-1"
+						uk-slideshow="autoplay: true"
+					>
+						<ul
+							className="uk-slideshow-items"
+							uk-height-viewport="min-height: 300"
+						>
+							<li>
+								<img
+									src="/images/booking-slide-1.jpg"
+									alt="slideshow-img"
+									uk-cover=""
+								/>
+							</li>
+							<li>
+								<img
+									src="/images/booking-slide-2.jpg"
+									alt="slideshow-img"
+									uk-cover=""
+								/>
+							</li>
+							<li>
+								<img
+									src="/images/booking-slide-3.jpg"
+									alt="slideshow-img"
+									uk-cover=""
+								/>
+							</li>
+						</ul>
+						<div className="uk-overlay-primary uk-position-cover"></div>
+						<div className="uk-position-center uk-position-small uk-text-center uk-light">
+							<h1 className="uk-margin-remove">V 3 N U E</h1>
+							<p className="uk-margin-remove">Weddings and Events</p>
+						</div>
+					</div>
+					<div className="uk-text-center">
+						<button
+							className="uk-button uk-button-primary uk-margin-small-top uk-margin-small-bottom"
+							onClick={ this.navigate.bind(this, "booking") }
+						>Book your event</button>
+					</div>
+					<hr className="uk-margin-top uk-margin-large-bottom"/>
+					<div
+						className="uk-grid-small glow"
+						uk-grid=""
+					>
+						<div className="uk-width-xlarge">
+							<img
+								data-src="images/home1.jpg"
+								alt="home1"
+								uk-img=""
+							/>
+						</div>
+						<div className="uk-width-expand uk-position-relative">
+							<h2 className="uk-position-center glow-hov">
+								Professional
+							</h2>
+						</div>
+					</div>
+					<hr className="uk-divider-icon uk-margin-top uk-margin-large-bottom"/>
+					<div
+						className="uk-grid-small glow"
+						uk-grid=""
+					>
+						<div className="uk-width-expand uk-position-relative">
+							<h2 className="uk-position-center glow-hov">
+								Passionate
+							</h2>
+						</div>
+						<div className="uk-width-xlarge">
+							<img
+								data-src="images/home2.jpg"
+								alt="home1"
+								uk-img=""
+							/>
+						</div>
+					</div>
+					<hr className="uk-divider-icon uk-margin-top uk-margin-large-bottom"/>
+					<div
+						className="uk-grid-small glow"
+						uk-grid=""
+					>
+						<div className="uk-width-xlarge">
+							<img
+								data-src="images/home3.jpg"
+								alt="home1"
+								uk-img=""
+							/>
+						</div>
+						<div className="uk-width-expand uk-position-relative">
+							<h2 className="uk-position-center glow-hov">
+								Commitment
+							</h2>
+						</div>
+					</div>
+				</div>
 			</div>
 		)
 	}

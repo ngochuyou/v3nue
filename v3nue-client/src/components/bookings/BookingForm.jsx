@@ -56,7 +56,7 @@ class BookingForm extends React.Component {
 		const { model, principal, eventTypes, venues } = this.props;
 
 		if (!model || !Array.isArray(eventTypes) || !Array.isArray(venues)) {
-			return null;	
+			return null;
 		}
 
 		return (

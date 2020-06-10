@@ -100,7 +100,7 @@ class LoginPage extends React.Component {
 
 	async onRegisterSubmit() {
 		const props = { ...this.props };
-		const model = new AccountModel(props.auth.signupModel);
+		const model = new AccountModel(props.auth[signupModelName]);
 		let result = model.validate();
 
 		if (result === true) {
@@ -138,6 +138,7 @@ class LoginPage extends React.Component {
 				}
 
 				default: 
+					props.dispatch(updateModel(signupModelName, props.auth.signupModel));
 					props.dispatch(updatePrincipal(null));
 					props.history.goBack();
 
