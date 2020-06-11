@@ -145,7 +145,6 @@ public class AccountController extends BaseController {
 		}
 
 		Class<? extends Account> clazz = accountManager.getAccountClass(role);
-
 		EMFactoryManager factoryManager = oauth2BasedFactoryManagerProvider.getEMFactoryManager(authenticationRole);
 		EMFactory factory = factoryManager.getEMFactory(clazz);
 		CriteriaBuilder builder = sessionFactory.getCriteriaBuilder();
